@@ -139,7 +139,11 @@ public class App {
                         id = scan.nextInt();
 
                         movie = path.read(id);
-                        System.out.println(movie.toString());
+                        if (movie == null) {
+                            System.out.println("Filme não encontrado.");
+                        }
+                        else 
+                            System.out.println(movie.toString());
                 
                         System.out.println();
                         break;
@@ -196,7 +200,7 @@ public class App {
                         path.delete(id);
 
                         System.out.println();
-                        System.out.println("Filme '" + movie.title + "' deletado com sucesso.");
+                        System.out.println("Filme deletado com sucesso.");
                         System.out.println();
                         break;
                         

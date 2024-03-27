@@ -32,7 +32,7 @@ public class File {
         arq.write(data);
     }
 
-    
+
     // get the last used ID
     public Header getID(Header h) throws IOException{
         byte[] lid;
@@ -60,14 +60,15 @@ public class File {
     }
 
     // read from the CRUD
-    public Dado read( int id) throws IOException{
+    public Dado read(int id) throws IOException{
         Dado movie = null;
         pos = 0;
         arq.seek(0);
+        // lid means last ID, save the last ID used
         int lid = arq.readInt();
         // verify if the ID was already used
         if(lid < id) {
-            System.out.println("Não existe esse ID");
+            System.out.println("ID ainda não utilizado");
         }
         else{
             fileSize = arq.length();
@@ -75,7 +76,7 @@ public class File {
             // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
                 arq.seek(pos);
-                int len = arq.readInt();
+                len = arq.readInt();
 
                 pos = pos + 6;
                 arq.seek(pos);
@@ -101,7 +102,10 @@ public class File {
                         // go to the next file
                         pos = pos + (len-3);
                     }                
-                }
+                } else {
+                    // go to the next file
+                    pos = pos + (len-2);
+                }  
             }
         }  
         return null;
@@ -115,7 +119,7 @@ public class File {
         pos = 0;
         arq.seek(pos);
 
-        //lid means last ID, save the last ID used
+        // lid means last ID, save the last ID used
         int lid = arq.readInt();
         // verify if the ID was already used
         if(lid < newMovie.id) {
@@ -197,42 +201,59 @@ public class File {
 
     // delete from the CRUD
     public void delete(int id) throws IOException {
-        pos = 4;
+        pos = 0;
         arq.seek(pos);
-        fileSize = arq.length();
+
+        // lid means last ID, save the last ID used
+        int lid = arq.readInt();
         // verify if the ID was already used
-        while (arq.getFilePointer() < fileSize) {
-            len = arq.readInt();
-
-            pos = pos + 6;
+        if(lid < id) {
+            System.out.println("ID ainda não utilizado");
+        }
+        else {
+            fileSize = arq.length();
+            pos = pos + 4;
             arq.seek(pos);
-            char lapide = (char) arq.read();
-
-            // verify if the file is valid
-            if(lapide != '*'){
-                pos = pos + 1;
+            // verify if the ID was already used
+            while (arq.getFilePointer() < fileSize) {
                 arq.seek(pos);
-                
-                // rid means read ID, rid is the ID passed by the user that needs to be deleted
-                int rid = arq.readInt();
-                    
-                // verify if it's the same ID
-                if(rid == id){
-                    // go to the tombstone of the file
-                    pos = pos - 1;
-                    arq.seek(pos);
-                    // inform that the file isn't valid
-                    arq.writeChar('*');
-                    break;
-                }
-                else {
-                    // go to the next file
-                    pos = pos + (len-3);
-                }                
+                len = arq.readInt();
 
+                pos = pos + 6;
+                arq.seek(pos);
+                char lapide = (char) arq.read();
+
+                // verify if the file is valid
+                if(lapide != '*'){
+                    pos = pos + 1;
+                    arq.seek(pos);
+                    
+                    // rid means read ID, rid is the ID passed by the user that needs to be deleted
+                    int rid = arq.readInt();
+                        
+                    // verify if it's the same ID
+                    if(rid == id){
+                        // go to the tombstone of the file
+                        pos = pos - 2;
+                        arq.seek(pos);
+                        // inform that the file isn't valid
+                        arq.writeChar('*');
+                        break;
+                    }
+                    else {
+                        // go to the next file
+                        pos = pos + (len-3);
+                    }                
+
+                } else {
+                // go to the next file
+                pos = pos + (len-2);
+                }
             }
 
         }
+
+        
     }
 
     // procedure to close the RandomAceesFile (arq)
