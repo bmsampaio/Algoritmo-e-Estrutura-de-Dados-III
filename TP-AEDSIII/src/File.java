@@ -32,6 +32,7 @@ public class File {
         arq.write(data);
     }
 
+    
     // get the last used ID
     public Header getID(Header h) throws IOException{
         byte[] lid;

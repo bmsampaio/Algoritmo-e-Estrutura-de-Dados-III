@@ -11,16 +11,39 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) throws Exception {
         boolean option = true;
-        // get the last ID used
-        int lastId = addDados()+1;
+        int lastId = 0;
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));        
         // pass the information for the RandomAccessFile
         File path = new File("banco.db", "rw");
         // create the header and set as 0 because there's no udes ID yet
-        Header h = new Header(lastId);
+        Header h = new Header();
         // create a way to the class File
         path.file();
+
+        System.out.println("É o seu primeiro acesso?");
+        System.out.println("s - SIM");
+        System.out.println("n - NÃO");
+        System.out.print("Escolha: ");
+        Scanner scan = new Scanner(System.in);
+        char firstAccess;
+        firstAccess = scan.next().charAt(0);
+
+        if (firstAccess == 's'){
+            System.out.println("Um momento, estamos carregando a base de dados...");
+            lastId = addDados();
+            System.out.println("Base de dados carregada.");
+            System.out.println();
+            System.out.println();
+        }
+        else if (firstAccess == 'n'){
+            h = path.getID(h);
+            lastId = h.lastID;
+        }
+
+        h = new Header(lastId);
+
+        
 
         // variables to be used at CRUD
         Dado movie = new Dado();
@@ -43,6 +66,9 @@ public class App {
             e.printStackTrace();
         }
 
+       
+
+
         while (option) {
             System.out.println("____________________ MENU CRUD ____________________");
             System.out.println("c - create");
@@ -51,7 +77,7 @@ public class App {
             System.out.println("d - delete");
             System.out.println("ou qualquer outra tecla para encerrar");
             System.out.print("Escolha: ");
-            Scanner scan = new Scanner(System.in);
+            scan = new Scanner(System.in);
             char entry;
             entry = scan.next().charAt(0);
             
@@ -79,7 +105,7 @@ public class App {
                             return;
                         }
                         
-                        // Converta o objeto Date para LocalDate (apenas data, sem tempo)
+                        // convert the object Date to LocalDate (only date, without time)
                         localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
                         System.out.print("Overview: ");
@@ -90,20 +116,18 @@ public class App {
                         System.out.print("Quantidade de generos: ");
                         input = reader.readLine();
                         quantityGenre = Integer.parseInt(input);
-                        System.out.print("Digite os generos separados por virgula:");
-                        System.out.print("Generos: ");
+                        System.out.print("Digite os generos separados por virgula: ");
                         genre = reader.readLine();
                         genres = genre.split(",");
-                        movie = new Dado(h.lastID, title, localDate, overview, popularity,quantityGenre, genres);
-                        System.out.println(movie.id + " " + movie.title);
+                        movie = new Dado(h.lastID+1, title, localDate, overview, popularity,quantityGenre, genres);
                         b = movie.toByteArray();
                         path.create(b);
                         h.updateID();
                         b = h.toByteArray();
                         path.updateHeader(b);
-                        
-                        System.out.println("Dado criado com sucesso.");
 
+                        System.out.println();
+                        System.out.println("Filme '" + movie.title + "' criado com sucesso.");
                         System.out.println();
                         break;
                 
@@ -142,7 +166,7 @@ public class App {
                             return;
                         }
                         
-                        // Converta o objeto Date para LocalDate (apenas data, sem tempo)
+                        // convert the object Date to LocalDate (only date, without time)
                         localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
                         System.out.print("Overview: ");
@@ -153,14 +177,14 @@ public class App {
                         System.out.print("Quantidade de generos: ");
                         input = reader.readLine();
                         quantityGenre = Integer.parseInt(input);
-                        System.out.print("Digite os generos separados por virgula:");
-                        System.out.print("Generos: ");
+                        System.out.print("Digite os generos separados por virgula: ");
                         genre = reader.readLine();
                         genres = genre.split(",");
                         movie = new Dado(updateID, title, localDate, overview, popularity,quantityGenre, genres);
                         path.update(movie);
-                        System.out.println("Dado atualizado com sucesso.");
 
+                        System.out.println();
+                        System.out.println("Filme '" + movie.title + "' atualizado com sucesso.");
                         System.out.println();
                         break;
 
@@ -171,7 +195,8 @@ public class App {
 
                         path.delete(id);
 
-                        System.out.println("Dado deletado com sucesso.");
+                        System.out.println();
+                        System.out.println("Filme '" + movie.title + "' deletado com sucesso.");
                         System.out.println();
                         break;
                         
@@ -180,8 +205,9 @@ public class App {
                         option = false;
                         // close file
                         path.end();
+
+                        System.out.println();
                         System.out.println("Aplicação encerrada com sucesso.");
-                    
                         System.out.println();
                         break;
                 }
@@ -192,7 +218,7 @@ public class App {
         }
     
     }
-    //function to add the data from the database to the file and return the number of entries(also the lastId)
+    // function to add the data from the database to the file and return the number of entries(also the lastId)
     private static int addDados() throws Exception{
         LoadBase loadBase = new LoadBase();
         BufferedReader br = new BufferedReader(new FileReader("moviesDatabase.csv"));

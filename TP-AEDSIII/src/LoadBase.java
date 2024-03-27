@@ -10,7 +10,7 @@ public class LoadBase{
     public static Dado[] dado = new Dado[10000];
     public static File file = new File();
 
-    //function treat the data and call the function to load the data in the database
+    // function treat the data and call the function to load the data in the database
     public static void tratarBase(String str, int i) throws Exception{
         Date data = null;
         String title = str.split(";")[1];
@@ -23,7 +23,7 @@ public class LoadBase{
         loadDatabase(i,title, localDate, overview, popularity,quantityGenre, genres);
     }
 
-    //funtion to load the date in the database
+    // funtion to load the date in the database
     private static void loadDatabase(int i,String title, LocalDate localDate, String overview, int popularity,int quantityGenre, String[] genre) throws Exception {
         Dado movie = new Dado();
         // pass the information for the RandomAccessFile
