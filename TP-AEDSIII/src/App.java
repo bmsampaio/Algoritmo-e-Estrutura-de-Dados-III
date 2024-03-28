@@ -140,7 +140,7 @@ public class App {
 
                         movie = path.read(id);
                         if (movie == null) {
-                            System.out.println("Filme não encontrado.");
+                            System.out.println("Filme não encon");
                         }
                         else 
                             System.out.println(movie.toString());

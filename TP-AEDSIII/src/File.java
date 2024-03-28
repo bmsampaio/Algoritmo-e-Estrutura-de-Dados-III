@@ -113,12 +113,11 @@ public class File {
 
     // update from the CRUD
     public void update(Dado newMovie) throws IOException {
+        fileSize = 0;
         // the movie to be updated
         Dado oldMovie = new Dado();
-
         pos = 0;
         arq.seek(pos);
-
         // lid means last ID, save the last ID used
         int lid = arq.readInt();
         // verify if the ID was already used
@@ -128,6 +127,7 @@ public class File {
         else {
             fileSize = arq.length();
             pos = pos+4;
+
             // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
                 arq.seek(pos);
@@ -184,7 +184,7 @@ public class File {
                     }
                     else {
                         // go o the next file
-                        pos = pos + (len-3);
+                        pos = pos + (oldlen-3);
                     }
 
                 }
