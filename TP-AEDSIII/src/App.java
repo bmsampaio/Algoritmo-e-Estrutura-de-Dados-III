@@ -21,6 +21,9 @@ public class App {
         // create a way to the class File
         path.file();
 
+        Scanner scan = new Scanner(System.in);
+
+        /* 
         System.out.println("É o seu primeiro acesso?");
         System.out.println("s - SIM");
         System.out.println("n - NÃO");
@@ -42,11 +45,15 @@ public class App {
         }
 
         h = new Header(lastId);
-
+        */
         
 
         // variables to be used at CRUD
         Dado movie = new Dado();
+        MlFile mlFileYear;
+        MlFileGenre mlFileGenre;
+        MlYear mlY;
+        MlGenre mlG;
         byte[] b;
         int id = 0;
         SimpleDateFormat dateFormat = null;
@@ -55,6 +62,7 @@ public class App {
 
         String title = "", overview = "", input = "", genre = "";
         int popularity = 0, quantityGenre = 0;
+        long linkYear = 0;
         String[] genres = null;
 
         try {
@@ -119,12 +127,39 @@ public class App {
                         System.out.print("Digite os generos separados por virgula: ");
                         genre = reader.readLine();
                         genres = genre.split(",");
-                        movie = new Dado(h.lastID+1, title, localDate, overview, popularity,quantityGenre, genres);
+                        movie = new Dado(h.lastID+1, title, localDate, overview, popularity, quantityGenre, genres);
                         b = movie.toByteArray();
-                        path.create(b);
+                        long end = path.create(b);
                         h.updateID();
                         b = h.toByteArray();
                         path.updateHeader(b);
+
+                        // Year multilist
+                        mlFileYear = new MlFile("MLYear.db", "rw");
+                        mlFileYear.file();
+                        mlY = new MlYear(movie.release.getYear(), end);
+                        String[] resultY = mlFileYear.setData(mlY);
+                        if(resultY != null) {
+                            long existingAdress = Long.parseLong(resultY[0]);
+                            long newAdress = Long.parseLong(resultY[0]);
+                            path.updateLinkY(existingAdress, newAdress);
+                        }
+
+                        // Genre multilist
+                        mlFileGenre = new MlFileGenre("MLGenre.db", "rw");
+                        mlFileGenre.file();
+                        for(int i = 0; i < genres.length; i++)
+                        {
+                            mlG = new MlGenre(movie.genres[i], end);
+                            String[] resultG = mlFileGenre.setData(mlG);
+
+                            if(resultG != null) {
+                                long existingAdress = Long.parseLong(resultY[0]);
+                                long newAdress = Long.parseLong(resultY[0]);
+                                path.updateLinkG(movie.genres[i], existingAdress, newAdress);
+                            }
+                        }
+                        
 
                         System.out.println();
                         System.out.println("Filme '" + movie.title + "' criado com sucesso.");

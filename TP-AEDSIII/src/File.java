@@ -45,13 +45,14 @@ public class File {
     }
 
     // create from the CRUD
-    public void create(byte[] data) throws IOException{
+    public long create(byte[] data) throws IOException{
         pos = 0;
         fileSize = arq.length();
         pos = fileSize;
         arq.seek(pos);
         arq.writeInt(data.length);
         arq.write(data);
+        return pos;
     }
     
     // update the file
@@ -256,8 +257,58 @@ public class File {
         
     }
 
+    public void updateLinkY(long existingAdress, long newAdress) throws IOException {
+        Dado movie = new Dado();
+        arq.seek(existingAdress);
+        byte[] readed;
+        len = (arq.readInt()-3);
+        arq.seek(existingAdress+7);
+        readed = new byte[len];
+        arq.read(readed);
+        movie.fromByteArray(readed);
+
+        boolean b = true;
+        while (b) {
+            if(movie.linkYear == -1) {
+                movie.linkYear = newAdress;
+                b = false;
+            }
+            else {
+                arq.seek(movie.linkYear);
+            }
+        }  
+
+        update(movie);
+
+    }
+
+    public void updateLinkG(String genre, long existingAdress, long newAdress) throws IOException {
+        Dado movie = new Dado();
+        arq.seek(existingAdress);
+        byte[] readed;
+        len = arq.readInt();
+        readed = new byte[len];
+        arq.read(readed);
+        movie.fromByteArray(readed);
+
+        boolean b = true;
+        for(int i = 0; i < movie.quantityGenre; i++) {
+            while (b) {
+                if(movie.genres[i] == genre){
+                    if(movie.linkGenre[i] == -1) {
+                        movie.linkGenre[i] = newAdress;
+                        b = false;
+                    }
+                    else {
+                        arq.seek(movie.linkYear);
+                    }
+                }
+            }
+        }
+    }
+
     // procedure to close the RandomAceesFile (arq)
     public void end() throws IOException{
-        arq.close();
+        //arq.close();
     }
 }
