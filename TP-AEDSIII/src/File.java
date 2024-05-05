@@ -278,25 +278,30 @@ public class File {
 
     public void updateLinkY(long existingAdress, long newAdress) throws IOException {
         Dado movie = new Dado();
-        arq.seek(existingAdress);
-        byte[] readed;
-        len = (arq.readInt()-3);
-        arq.seek(existingAdress+7);
-        readed = new byte[len];
-        arq.read(readed);
-        movie.fromByteArray(readed);
+        pos = existingAdress;
+        arq.seek(pos);
 
         boolean b = true;
         while (b) {
+            byte[] readed;
+            len = (arq.readInt()-3);
+            arq.seek(pos+7);
+            readed = new byte[len];
+            arq.read(readed);
+            movie.fromByteArray(readed);
+
             if(movie.linkYear == -1) {
                 movie.linkYear = newAdress;
                 b = false;
             }
             else {
-                arq.seek(movie.linkYear);
+                pos = (movie.linkYear);
+                arq.seek(pos);
             }
-        }  
+            
+        }
 
+        movie.lapide = "-";
         update(movie);
 
     }

@@ -144,7 +144,7 @@ public class App {
                         String[] resultY = mlFileYear.setData(mlY);
                         if(resultY != null) {
                             long existingAdress = Long.parseLong(resultY[0]);
-                            long newAdress = Long.parseLong(resultY[0]);
+                            long newAdress = Long.parseLong(resultY[1]);
                             path.updateLinkY(existingAdress, newAdress);
                         }
 

@@ -45,7 +45,6 @@ public class MlFile {
                 String[] result = new String[2];
                 result[0] = String.valueOf(comp.adress);
                 result[1] = String.valueOf(data.adress);
-                System.out.println(result);
                 return result;                
             }
             else {
