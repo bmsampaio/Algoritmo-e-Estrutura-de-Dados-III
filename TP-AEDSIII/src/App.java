@@ -46,7 +46,10 @@ public class App {
 
         h = new Header(lastId);
         */
-        
+        h = path.getID(h);
+        lastId = h.lastID;
+        h = new Header(lastId);
+
 
         // variables to be used at CRUD
         Dado movie = new Dado();
@@ -175,11 +178,15 @@ public class App {
 
                         movie = path.read(id);
                         if (movie == null) {
-                            System.out.println("Filme não encon");
+                            System.out.println();
+                            System.out.println("Filme não encontrado");
+                            System.out.println();
                         }
-                        else 
+                        else {
+                            System.out.println();
                             System.out.println(movie.toString());
-                
+                            System.out.println();
+                        }
                         System.out.println();
                         break;
 
@@ -220,11 +227,17 @@ public class App {
                         genre = reader.readLine();
                         genres = genre.split(",");
                         movie = new Dado(updateID, title, localDate, overview, popularity,quantityGenre, genres);
-                        path.update(movie);
-
-                        System.out.println();
-                        System.out.println("Filme '" + movie.title + "' atualizado com sucesso.");
-                        System.out.println();
+                        movie = path.update(movie);
+                        if(movie == null) {
+                            System.out.println();
+                            System.out.println("Filme não encontrado");
+                            System.out.println();
+                        }
+                        else {
+                            System.out.println();
+                            System.out.println("Filme '" + movie.title + "' atualizado com sucesso.");
+                            System.out.println();
+                        }
                         break;
 
                     // DELETE

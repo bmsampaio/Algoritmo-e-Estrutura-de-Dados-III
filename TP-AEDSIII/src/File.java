@@ -24,6 +24,7 @@ public class File {
     }
 
     public void createHeader(byte[] data) throws IOException{
+        arq.seek(0);
         arq.write(data);
     }  
 
@@ -37,8 +38,7 @@ public class File {
     public Header getID(Header h) throws IOException{
         byte[] lid;
         arq.seek(0);
-        len = arq.readInt();
-        lid = new byte[len];
+        lid = new byte[4];
         arq.read(lid);
         h.fromByteArray(lid);
         return h;
@@ -46,7 +46,7 @@ public class File {
 
     // create from the CRUD
     public long create(byte[] data) throws IOException{
-        pos = 0;
+        // pos = 0;
         fileSize = arq.length();
         pos = fileSize;
         arq.seek(pos);
@@ -64,7 +64,8 @@ public class File {
     public Dado read(int id) throws IOException{
         Dado movie = null;
         pos = 0;
-        arq.seek(0);
+        arq.seek(pos);
+        long point = arq.getFilePointer();
         // lid means last ID, save the last ID used
         int lid = arq.readInt();
         // verify if the ID was already used
@@ -73,11 +74,10 @@ public class File {
         }
         else{
             fileSize = arq.length();
-            pos = pos+4;
+            pos = pos + 4;
             // scroll through the file until the end of the file
-            while (arq.getFilePointer() < fileSize) {
-                arq.seek(pos);
-                len = arq.readInt();
+            while (point < fileSize) {
+                len = (arq.readInt() - 3);
 
                 pos = pos + 6;
                 arq.seek(pos);
@@ -95,30 +95,32 @@ public class File {
                     movie.fromByteArray(readed);
                     
                     // verify if it's the same ID
-                    if(movie.id == id){
+                    if(movie.id == id) {
                         // return the data
                         return movie;
                     }
                     else {
                         // go to the next file
-                        pos = pos + (len-3);
+                        pos = pos + len;
                     }                
                 } else {
                     // go to the next file
-                    pos = pos + (len-2);
+                    pos = pos + (len+1);
                 }  
+                arq.seek(pos);
+                point = arq.getFilePointer();
             }
         }  
         return null;
     }
 
     // update from the CRUD
-    public void update(Dado newMovie) throws IOException {
-        fileSize = 0;
+    public Dado update(Dado newMovie) throws IOException {
         // the movie to be updated
         Dado oldMovie = new Dado();
         pos = 0;
         arq.seek(pos);
+        long point = arq.getFilePointer();
         // lid means last ID, save the last ID used
         int lid = arq.readInt();
         // verify if the ID was already used
@@ -131,9 +133,8 @@ public class File {
 
             // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
-                arq.seek(pos);
                 // odlen means old lenght, keep the lenght of the movie to be updated
-                int oldlen = arq.readInt();
+                int oldlen = (arq.readInt() - 3);
 
                 pos = pos + 6;
                 arq.seek(pos);
@@ -159,7 +160,7 @@ public class File {
                         register = newMovie.toByteArray();
                         int tamanho = register.length;
                         // verify if the size of the movie to be updated and the updtate is the same or if the new one is smaller
-                        if(oldlen >= tamanho) {
+                        if((oldlen+3) >= tamanho) {
                             // if its samaller, than the data is updated
                             pos = pm - 2;
                             arq.seek(pos);
@@ -185,23 +186,26 @@ public class File {
                     }
                     else {
                         // go o the next file
-                        pos = pos + (oldlen-3);
+                        pos = pos + oldlen;
                     }
 
                 }
                 else {
                     // go to the next file
-                    pos = pos + (len-3);
-                }   
-
+                    pos = pos + (oldlen+1);
+                }  
+                arq.seek(pos);
+                point = arq.getFilePointer();
             }
 
         }
+        return null;
 
     }
 
     // delete from the CRUD
     public void delete(int id) throws IOException {
+        Dado movie = null;
         pos = 0;
         arq.seek(pos);
 
@@ -214,23 +218,30 @@ public class File {
         else {
             fileSize = arq.length();
             pos = pos + 4;
-            arq.seek(pos);
-            // verify if the ID was already used
+            // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
                 arq.seek(pos);
-                len = arq.readInt();
+                len = (arq.readInt() - 3);
 
                 pos = pos + 6;
                 arq.seek(pos);
+                long pm = pos;
                 char lapide = (char) arq.read();
 
                 // verify if the file is valid
                 if(lapide != '*'){
                     pos = pos + 1;
                     arq.seek(pos);
+
+                    byte[] readed;
+                    readed = new byte[len];
+                    arq.read(readed);
+                    movie = new Dado();
+                    // transform the file data from bytes to Dado
+                    movie.fromByteArray(readed);
                     
                     // rid means read ID, rid is the ID passed by the user that needs to be deleted
-                    int rid = arq.readInt();
+                    /*int rid = arq.readInt();
                         
                     // verify if it's the same ID
                     if(rid == id){
@@ -240,15 +251,23 @@ public class File {
                         // inform that the file isn't valid
                         arq.writeChar('*');
                         break;
+                    }*/
+                    if(movie.id == id) {
+                        movie.lapide = "*";
+                        pos = pm - 2;
+                        arq.seek(pos);
+                        byte[] b;
+                        b = movie.toByteArray();
+                        fileUpdate(b);
                     }
                     else {
                         // go to the next file
-                        pos = pos + (len-3);
+                        pos = pos + len;;
                     }                
 
                 } else {
                 // go to the next file
-                pos = pos + (len-2);
+                pos = pos + (len+1);
                 }
             }
 
