@@ -34,13 +34,12 @@ public class MlFileGenre {
             arq.read(readed);
             comp.fromByteArray(readed);
 
-            if(comp.genre == data.genre) {
+            if(comp.genre.equalsIgnoreCase(data.genre)) {
                 comp.quantity = comp.quantity + 1;
                 updateMlFile(comp, pos);
                 String[] result = new String[2];
                 result[0] = String.valueOf(comp.adress);
                 result[1] = String.valueOf(data.adress);
-                System.out.println(result);
                 return result;                
             }
             else {

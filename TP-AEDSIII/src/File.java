@@ -295,7 +295,7 @@ public class File {
                 b = false;
             }
             else {
-                pos = (movie.linkYear);
+                pos = movie.linkYear;
                 arq.seek(pos);
             }
             
@@ -308,27 +308,35 @@ public class File {
 
     public void updateLinkG(String genre, long existingAdress, long newAdress) throws IOException {
         Dado movie = new Dado();
-        arq.seek(existingAdress);
+        pos = existingAdress;
+        arq.seek(pos);
+
         byte[] readed;
-        len = arq.readInt();
+        len = (arq.readInt()-3);
+        arq.seek(pos+7);
         readed = new byte[len];
         arq.read(readed);
         movie.fromByteArray(readed);
-
+        
         boolean b = true;
         for(int i = 0; i < movie.quantityGenre; i++) {
+            b = true;
             while (b) {
-                if(movie.genres[i] == genre){
+                if(movie.genres[i].equalsIgnoreCase(genre)){
                     if(movie.linkGenre[i] == -1) {
                         movie.linkGenre[i] = newAdress;
                         b = false;
                     }
                     else {
-                        arq.seek(movie.linkYear);
+                        pos = movie.linkGenre[i];
+                        arq.seek(pos);
                     }
                 }
             }
         }
+
+        movie.lapide = "-";
+        update(movie);
     }
 
     // procedure to close the RandomAceesFile (arq)

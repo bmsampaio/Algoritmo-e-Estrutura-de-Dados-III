@@ -158,7 +158,7 @@ public class App {
 
                             if(resultG != null) {
                                 long existingAdress = Long.parseLong(resultY[0]);
-                                long newAdress = Long.parseLong(resultY[0]);
+                                long newAdress = Long.parseLong(resultY[1]);
                                 path.updateLinkG(movie.genres[i], existingAdress, newAdress);
                             }
                         }

@@ -22,7 +22,7 @@ public class MlGenre {
     }
 
     public String toString() {
-        return "Year: " + this.genre + " | quantity: " + this.quantity + " | First Adress: " + this.adress;
+        return "Genre: " + this.genre + " | quantity: " + this.quantity + " | First Adress: " + this.adress;
     }
 
     public byte[] toByteArray() throws IOException {
