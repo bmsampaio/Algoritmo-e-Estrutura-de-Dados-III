@@ -75,6 +75,7 @@ public class File {
         else{
             fileSize = arq.length();
             pos = pos + 4;
+            point = arq.getFilePointer();
             // scroll through the file until the end of the file
             while (point < fileSize) {
                 len = (arq.readInt() - 3);
@@ -332,6 +333,9 @@ public class File {
                         arq.seek(pos);
                     }
                 }
+                else {
+                    b = false;
+                }
             }
         }
 
@@ -342,5 +346,59 @@ public class File {
     // procedure to close the RandomAceesFile (arq)
     public void end() throws IOException{
         //arq.close();
+    }
+
+    public void showYears(long position) throws IOException {
+        if(position == 0)
+            System.out.println("Nenhum filme lançado neste ano");
+        else{
+            Dado movie = new Dado();
+
+            arq.seek(position);
+            byte[] readedMovie;
+            len = (arq.readInt()-3);
+            arq.seek(position+7);
+            readedMovie = new byte[len];
+            arq.read(readedMovie);
+            movie.fromByteArray(readedMovie);
+
+            System.out.println(movie.toString());
+            if(movie.linkYear != -1)
+                showYears(movie.linkYear);
+        }
+        
+    }
+
+    public void showGenres(long position, String genre) throws IOException {
+        if(position == 0)
+            System.out.println("Nenhum filme com esse gênero");
+        else {
+
+            Dado movie = new Dado();
+
+            arq.seek(position);
+            byte[] readedMovie;
+            len = (arq.readInt()-3);
+            arq.seek(position+7);
+            readedMovie = new byte[len];
+            arq.read(readedMovie);
+            movie.fromByteArray(readedMovie);
+
+            int i = getPosition(genre, movie);
+
+            System.out.println(movie.toString());
+           
+            if(movie.linkGenre[i] != -1)
+                showYears(movie.linkGenre[i]);
+        }
+    }
+
+    private int getPosition(String genre, Dado movie) {
+        for(int i = 0; i < movie.quantityGenre; i++){
+            if(movie.genres[i].equalsIgnoreCase(genre)){
+                return i;
+            }
+        }
+        return 0;
     }
 }
