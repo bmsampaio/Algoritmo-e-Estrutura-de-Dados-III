@@ -23,29 +23,28 @@ public class App {
 
         Scanner scan = new Scanner(System.in);
 
-        /*
-         * System.out.println("É o seu primeiro acesso?");
-         * System.out.println("s - SIM");
-         * System.out.println("n - NÃO");
-         * System.out.print("Escolha: ");
-         * Scanner scan = new Scanner(System.in);
-         * char firstAccess;
-         * firstAccess = scan.next().charAt(0);
-         * 
-         * if (firstAccess == 's'){
-         * System.out.println("Um momento, estamos carregando a base de dados...");
-         * lastId = addDados();
-         * System.out.println("Base de dados carregada.");
-         * System.out.println();
-         * System.out.println();
-         * }
-         * else if (firstAccess == 'n'){
-         * h = path.getID(h);
-         * lastId = h.lastID;
-         * }
-         * 
-         * h = new Header(lastId);
-         */
+        
+        System.out.println("É o seu primeiro acesso?");
+        System.out.println("s - SIM");
+        System.out.println("n - NÃO");
+        System.out.print("Escolha: ");
+        char firstAccess;
+        firstAccess = scan.next().charAt(0);
+        
+        if (firstAccess == 's'){
+        System.out.println("Um momento, estamos carregando a base de dados...");
+        lastId = addDados();
+        System.out.println("Base de dados carregada.");
+        System.out.println();
+        System.out.println();
+        }
+        else if (firstAccess == 'n'){
+        h = path.getID(h);
+        lastId = h.lastID;
+        }
+         
+        h = new Header(lastId);
+        
         h = path.getID(h);
         lastId = h.lastID;
         h = new Header(lastId);
