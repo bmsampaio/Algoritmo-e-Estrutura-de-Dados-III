@@ -143,8 +143,8 @@ public class App {
                                 genres = genre.split(",");
                                 movie = new Dado(h.lastID + 1, title, localDate, overview, popularity, quantityGenre,
                                         genres);
-                                b = movie.toByteArray();
-                                long end = path.create(b);
+                                //b = movie.toByteArray();
+                                long end = path.create(movie);
                                 h.updateID();
                                 b = h.toByteArray();
                                 path.updateHeader(b);

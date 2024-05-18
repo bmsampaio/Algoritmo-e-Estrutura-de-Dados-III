@@ -3,37 +3,37 @@ import java.io.RandomAccessFile;
 
 public class File {
 
-  protected String database, mode;
-  //long p;
-  long pos = 0;
-  long fileSize = 0;
-  int len;
-  RandomAccessFile arq;
-  public static ArvoreB Arvore = new ArvoreB(10);
+    protected String database, mode;
+    long pos = 0;
+    long fileSize = 0;
+    int len;
+    RandomAccessFile arq;
+    public static ArvoreB Arvore = new ArvoreB(10);
 
-  public File() {}
+    public File() {}
 
-  public File(String database, String mode) {
-    this.database = database;
-    this.mode = mode;
-  }
+    public File(String database, String mode) {
+        this.database = database;
+        this.mode = mode;
+    }
 
-  // create a RandonAccessFile
-  public void file() throws IOException {
-    arq = new RandomAccessFile(database, mode);
-  }
+    // create a RandonAccessFile
+    public void file() throws IOException {
+        arq = new RandomAccessFile(database, mode);
+    }
 
-    public void createHeader(byte[] data) throws IOException{
+    public void createHeader(byte[] data) throws IOException {
         arq.seek(0);
         arq.write(data);
-    } 
+    }
 
-  public void updateHeader(byte[] data) throws IOException {
-    arq.seek(0);
-    arq.write(data);
-  }
+    public void updateHeader(byte[] data) throws IOException {
+        arq.seek(0);
+        arq.write(data);
+    }
+
     // get the last used ID
-    public Header getID(Header h) throws IOException{
+    public Header getID(Header h) throws IOException {
         byte[] lid;
         arq.seek(0);
         lid = new byte[4];
@@ -41,168 +41,131 @@ public class File {
         h.fromByteArray(lid);
         return h;
     }
-  
-  // create from the CRUD
-  public void create(Dado movie) throws IOException {
-    byte[] data = movie.toByteArray();
-    pos = 0;
-    fileSize = arq.length();
-    pos = fileSize;
-    arq.seek(pos);
-    arq.writeInt(data.length);
-    arq.write(data);
-    Arvore.inserir(movie.id, pos);
-  }
 
-  // update the file
-  public void fileUpdate(byte[] data) throws IOException {
-    arq.write(data);
-  }
+    // create from the CRUD
+    public long create(Dado movie) throws IOException {
+        byte[] data = movie.toByteArray();
+        pos = 0;
+        fileSize = arq.length();
+        pos = fileSize;
+        arq.seek(pos);
+        arq.writeInt(data.length);
+        arq.write(data);
+        Arvore.inserir(movie.id, pos);
+        return pos;
+    }
+
+    // update the file
+    public void fileUpdate(byte[] data) throws IOException {
+        arq.write(data);
+    }
 
     // read from the CRUD
-    public Dado read(int id) throws IOException{
+    public Dado read(int id) throws IOException {
         Dado movie = null;
         pos = 0;
         arq.seek(pos);
         long point = arq.getFilePointer();
-        // lid means last ID, save the last ID used
         int lid = arq.readInt();
-        // verify if the ID was already used
-        if(lid < id) {
+
+        if (lid < id) {
             System.out.println("ID ainda não utilizado");
-        }
-        else{
+        } else {
             fileSize = arq.length();
             pos = pos + 4;
             point = arq.getFilePointer();
-            // scroll through the file until the end of the file
+
             while (point < fileSize) {
                 len = (arq.readInt() - 3);
                 pos = pos + 6;
                 arq.seek(pos);
                 char lapide = (char) arq.read();
-                // verify if the file is valid
-                if(lapide != '*'){
+
+                if (lapide != '*') {
                     pos = pos + 1;
                     arq.seek(pos);
-                    byte[] readed;
-                    readed = new byte[len];
+                    byte[] readed = new byte[len];
                     arq.read(readed);
                     movie = new Dado();
-                    // transform the file data from bytes to Dado
                     movie.fromByteArray(readed);
-                    
-                    // verify if it's the same ID
-                    if(movie.id == id) {
-                        // return the data
+
+                    if (movie.id == id) {
                         return movie;
-                    }
-                    else {
-                        // go to the next file
+                    } else {
                         pos = pos + len;
-                    }                
+                    }
                 } else {
-                    // go to the next file
-                    pos = pos + (len+1);
-                }  
+                    pos = pos + (len + 1);
+                }
                 arq.seek(pos);
                 point = arq.getFilePointer();
             }
-        }  
+        }
         return null;
     }
-  
- 
+
     // update from the CRUD
     public Dado update(Dado newMovie) throws IOException {
-        // the movie to be updated
         Dado oldMovie = new Dado();
+        char lapide;
+        int pm = 0;
         pos = 0;
         arq.seek(pos);
         long point = arq.getFilePointer();
-        // lid means last ID, save the last ID used
         int lid = arq.readInt();
-        // verify if the ID was already used
-        if(lid < newMovie.id) {
+
+        if (lid < newMovie.id) {
             System.out.println("Não existe esse ID");
-            // scroll through the file until the end of the file
+        } else {
+            fileSize = arq.length();
+            pos = pos + 4;
+            point = arq.getFilePointer();
+
             while (arq.getFilePointer() < fileSize) {
-                // odlen means old lenght, keep the lenght of the movie to be updated
                 int oldlen = (arq.readInt() - 3);
 
+                arq.seek(pos + 6);
+                lapide = (char) arq.read();
 
-      // scroll through the file until the end of the file
-      while (arq.getFilePointer() < fileSize) {
-        arq.seek(pos);
-        // odlen means old lenght, keep the lenght of the movie to be updated
-        int oldlen = arq.readInt();
-
-
-                // verify if the file is valid
-                if(lapide != '*'){
-                    // walks to the beging of the data of the movie
+                if (lapide != '*') {
                     pos = pos + 1;
                     arq.seek(pos);
-                    byte[] readed;
-                    readed = new byte[oldlen];
+                    byte[] readed = new byte[oldlen];
                     arq.read(readed);
-                    // transform the file data from bytes to Dado
                     oldMovie.fromByteArray(readed);
                     Arvore.remover(oldMovie.id, pos);
-                  
 
-                    // verify if the ID searched to be updated
-                    if(oldMovie.id == newMovie.id){
-                        byte[] register;
-                        // transform the new movie to bytes to keep the size
-                        register = newMovie.toByteArray();
+                    if (oldMovie.id == newMovie.id) {
+                        byte[] register = newMovie.toByteArray();
                         int tamanho = register.length;
-                        // verify if the size of the movie to be updated and the updtate is the same or if the new one is smaller
-                        if((oldlen+3) >= tamanho) {
-                            // if its samaller, than the data is updated
+
+                        if ((oldlen + 3) >= tamanho) {
                             pos = pm - 2;
                             arq.seek(pos);
                             fileUpdate(register);
                             break;
-                        }
-                        else {
-                            // if it's not, means that the new data is bigger. So the data gonna be write at the end of the file
-                            // signals that the data is no longer valid
+                        } else {
                             pos = pm - 1;
                             arq.seek(pos);
                             arq.writeChar('*');
-                          
-                            // write the new information at the end of the file
+
                             pos = fileSize - 1;
                             arq.seek(pos);
-                            byte[] b;
-                            b = newMovie.toByteArray();
                             create(newMovie);
                         }
-                    
-                    }
-                    else {
-                        // go o the next file
+                    } else {
                         pos = pos + oldlen;
                     }
-
+                } else {
+                    pos = pos + (oldlen + 1);
                 }
-                else {
-                    // go to the next file
-                    pos = pos + (oldlen+1);
-                }  
                 arq.seek(pos);
                 point = arq.getFilePointer();
-
-        
-
-
-        // update the ArvoreB
+            }
+        }
         Arvore.inserir(newMovie.id, pos);
         return null;
-      }
-
-
+    }
 
     // delete from the CRUD
     public void delete(int id) throws IOException {
@@ -210,16 +173,14 @@ public class File {
         pos = 0;
         arq.seek(pos);
 
-        // lid means last ID, save the last ID used
         int lid = arq.readInt();
-        // verify if the ID was already used
-        if(lid < id) {
+
+        if (lid < id) {
             System.out.println("ID ainda não utilizado");
-        }
-        else {
+        } else {
             fileSize = arq.length();
             pos = pos + 4;
-            // scroll through the file until the end of the file
+
             while (arq.getFilePointer() < fileSize) {
                 arq.seek(pos);
                 len = (arq.readInt() - 3);
@@ -229,44 +190,32 @@ public class File {
                 long pm = pos;
                 char lapide = (char) arq.read();
 
-                // verify if the file is valid
-                if(lapide != '*'){
+                if (lapide != '*') {
                     pos = pos + 1;
                     arq.seek(pos);
 
-                    byte[] readed;
-                    readed = new byte[len];
+                    byte[] readed = new byte[len];
                     arq.read(readed);
                     movie = new Dado();
-                    // transform the file data from bytes to Dado
                     movie.fromByteArray(readed);
-                    if(movie.id == id) {
+
+                    if (movie.id == id) {
                         movie.lapide = "*";
                         pos = pm - 2;
                         arq.seek(pos);
-                        byte[] b;
-                        b = movie.toByteArray();
+                        byte[] b = movie.toByteArray();
                         fileUpdate(b);
-                        // remove the data from the ArvoreB
                         Arvore.remover(movie.id, pos);
                         break;
+                    } else {
+                        pos = pos + len;
                     }
-                    else {
-                        // go to the next file
-                        pos = pos + len;;
-                    }                
-
                 } else {
-                // go to the next file
-                pos = pos + (len+1);
+                    pos = pos + (len + 1);
                 }
-            } 
-          
+            }
         }
-      }
     }
-  }
-
 
     public void updateLinkY(long existingAdress, long newAdress) throws IOException {
         Dado movie = new Dado();
@@ -276,26 +225,23 @@ public class File {
         boolean b = true;
         while (b) {
             byte[] readed;
-            len = (arq.readInt()-3);
-            arq.seek(pos+7);
+            len = (arq.readInt() - 3);
+            arq.seek(pos + 7);
             readed = new byte[len];
             arq.read(readed);
             movie.fromByteArray(readed);
 
-            if(movie.linkYear == -1) {
+            if (movie.linkYear == -1) {
                 movie.linkYear = newAdress;
                 b = false;
-            }
-            else {
+            } else {
                 pos = movie.linkYear;
                 arq.seek(pos);
             }
-            
         }
 
         movie.lapide = "-";
         update(movie);
-
     }
 
     public void updateLinkG(String genre, long existingAdress, long newAdress) throws IOException {
@@ -304,27 +250,25 @@ public class File {
         arq.seek(pos);
 
         byte[] readed;
-        len = (arq.readInt()-3);
-        arq.seek(pos+7);
+        len = (arq.readInt() - 3);
+        arq.seek(pos + 7);
         readed = new byte[len];
         arq.read(readed);
         movie.fromByteArray(readed);
-        
+
         boolean b = true;
-        for(int i = 0; i < movie.quantityGenre; i++) {
+        for (int i = 0; i < movie.quantityGenre; i++) {
             b = true;
             while (b) {
-                if(movie.genres[i].equalsIgnoreCase(genre)){
-                    if(movie.linkGenre[i] == -1) {
+                if (movie.genres[i].equalsIgnoreCase(genre)) {
+                    if (movie.linkGenre[i] == -1) {
                         movie.linkGenre[i] = newAdress;
                         b = false;
-                    }
-                    else {
+                    } else {
                         pos = movie.linkGenre[i];
                         arq.seek(pos);
                     }
-                }
-                else {
+                } else {
                     b = false;
                 }
             }
@@ -334,43 +278,36 @@ public class File {
         update(movie);
     }
 
-    // procedure to close the RandomAceesFile (arq)
-    public void end() throws IOException{
-        //arq.close();
-    }
-
     public void showYears(long position) throws IOException {
-        if(position == 0)
+        if (position == 0)
             System.out.println("Nenhum filme lançado neste ano");
-        else{
+        else {
             Dado movie = new Dado();
 
             arq.seek(position);
             byte[] readedMovie;
-            len = (arq.readInt()-3);
-            arq.seek(position+7);
+            len = (arq.readInt() - 3);
+            arq.seek(position + 7);
             readedMovie = new byte[len];
             arq.read(readedMovie);
             movie.fromByteArray(readedMovie);
 
             System.out.println(movie.toString());
-            if(movie.linkYear != -1)
+            if (movie.linkYear != -1)
                 showYears(movie.linkYear);
         }
-        
     }
 
     public void showGenres(long position, String genre) throws IOException {
-        if(position == 0)
+        if (position == 0)
             System.out.println("Nenhum filme com esse gênero");
         else {
-
             Dado movie = new Dado();
 
             arq.seek(position);
             byte[] readedMovie;
-            len = (arq.readInt()-3);
-            arq.seek(position+7);
+            len = (arq.readInt() - 3);
+            arq.seek(position + 7);
             readedMovie = new byte[len];
             arq.read(readedMovie);
             movie.fromByteArray(readedMovie);
@@ -378,30 +315,28 @@ public class File {
             int i = getPosition(genre, movie);
 
             System.out.println(movie.toString());
-           
-            if(movie.linkGenre[i] != -1)
+
+            if (movie.linkGenre[i] != -1)
                 showYears(movie.linkGenre[i]);
         }
     }
 
     private int getPosition(String genre, Dado movie) {
-        for(int i = 0; i < movie.quantityGenre; i++){
-            if(movie.genres[i].equalsIgnoreCase(genre)){
+        for (int i = 0; i < movie.quantityGenre; i++) {
+            if (movie.genres[i].equalsIgnoreCase(genre)) {
                 return i;
             }
         }
         return 0;
     }
 
+    // function to load the ArvoreB, where the keys are the movie IDs and the positions are the byte offsets of the movies in the file
+    public void loadArvoreB() throws IOException {
+        Arvore.Mostrar();
+    }
 
-  // function to load the ArvoreB, where the keys are the movie IDs and the positions are the byte offsets of the movies in the file
-  public void loadArvoreB() throws IOException {
-    Arvore.Mostrar();
-  }
-
-  // procedure to close the RandomAceesFile (arq)
-  public void end() throws IOException {
-    arq.close();
-  }
-
+    // procedure to close the RandomAceesFile (arq)
+    public void end() throws IOException {
+        arq.close();
+    }
 }
