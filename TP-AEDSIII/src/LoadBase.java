@@ -33,7 +33,6 @@ public class LoadBase{
         // create a way to the class File
         path.file();
         byte[] b;
-
         try {
             // HEADER
             b = h.toByteArray();
@@ -44,8 +43,7 @@ public class LoadBase{
         }
 
         movie = new Dado(h.lastID, title, localDate, overview, popularity,quantityGenre, genre);
-        b = movie.toByteArray();
-        path.create(b);
+        path.create(movie);
         h.updateID();
         b = h.toByteArray();
         path.updateHeader(b);
