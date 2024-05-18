@@ -11,6 +11,8 @@ public class Dado {
     protected String lapide, title, overview;
     protected String[] genres;
     protected int id, popularity, quantityGenre;
+    protected long linkYear;
+    protected long[] linkGenre;
     protected LocalDate release;
 
     public Dado(){
@@ -23,11 +25,16 @@ public class Dado {
         this.id = id;
         this.title = title;
         this.release = release;
+        this.linkYear = -1;
         this.overview = overview;
         this.popularity = popularity;
         this.quantityGenre = quantityGenre;
         this.genres = new String[quantityGenre];
-        this.genres = genres;
+        this.linkGenre = new long[quantityGenre];
+        for(int i = 0; i < quantityGenre; i++) {
+            this.genres[i] = genres[i];
+            this.linkGenre[i] = -1;
+        }
     }
 
     public String toString() {
@@ -42,12 +49,15 @@ public class Dado {
         dos.writeInt(this.id);
         dos.writeUTF(this.title);
         dos.writeLong(this.release.toEpochDay());
+        dos.writeLong(linkYear);
         dos.writeUTF(this.overview);
         dos.writeInt(this.popularity);
         dos.writeInt(this.quantityGenre);
         for (int i = 0; i < this.quantityGenre; i++) {
             dos.writeUTF(this.genres[i]);
+            dos.writeLong(this.linkGenre[i]);
         }
+        
         dos.close();
         return baos.toByteArray();
     }
@@ -56,16 +66,20 @@ public class Dado {
     public void fromByteArray(byte[] b) throws IOException {
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
         DataInputStream dis = new DataInputStream(bais);
+        // this.lapide = dis.readUTF();
         this.id = dis.readInt();
         this.title = dis.readUTF();
         long epochDay = dis.readLong();
         this.release = LocalDate.ofEpochDay(epochDay);
+        this.linkYear = dis.readLong();
         this.overview = dis.readUTF();
         this.popularity = dis.readInt();
         this.quantityGenre = dis.readInt();
         this.genres = new String[this.quantityGenre];
+        this.linkGenre = new long[this.quantityGenre];
         for (int i = 0; i <this.quantityGenre; i++) {
             this.genres[i] = dis.readUTF();
+            this.linkGenre[i] = dis.readLong();
         }
         dis.close();
     }
