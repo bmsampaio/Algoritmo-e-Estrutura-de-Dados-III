@@ -8,6 +8,8 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Scanner;
 
+import pck_txt.BinaryToTextConverter;
+
 public class App {
     public static void main(String[] args) throws Exception {
         boolean option = true;
@@ -22,6 +24,7 @@ public class App {
         path.file();
 
         Scanner scan = new Scanner(System.in);
+        char entry;
 
         
         System.out.println("É o seu primeiro acesso?");
@@ -83,18 +86,17 @@ public class App {
 
         while (option) {
             System.out.println("____________________ MENU DE OPÇÕES ____________________");
-            System.out.println("c - crud");
-            System.out.println("i - indicações de filmes similares");
+            System.out.println("1 - crud");
+            System.out.println("2 - indicações de filmes similares");
+            System.out.println("3 - LZW");
             System.out.println("ou qualquer outra tecla para encerrar");
             System.out.print("Escolha: ");
-            scan = new Scanner(System.in);
-            char entry;
-            entry = scan.next().charAt(0);
+            int escolha = scan.nextInt();
 
             try {
 
-                switch (entry) {
-                    case 'c':
+                switch (escolha) {
+                    case 1:
                         System.out.println("____________________ MENU CRUD ____________________");
                         System.out.println("c - create");
                         System.out.println("r - read");
@@ -263,7 +265,7 @@ public class App {
 
                         break;
 
-                    case 'i':
+                    case 2:
                         System.out.println("");
                         System.out.println("Deseja buscar por um ano ou um gênero?");
                         System.out.println("a - ano");
@@ -289,6 +291,13 @@ public class App {
 
                         System.out.println();
                         System.out.println();
+                        break;
+
+                    // LZW
+                    case 3:
+                        //  create txt file
+                        BinaryToTextConverter.makeTxt();
+                        
                         break;
 
                     default:
