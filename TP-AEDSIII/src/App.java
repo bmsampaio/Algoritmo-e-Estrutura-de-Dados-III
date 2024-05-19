@@ -260,6 +260,10 @@ public class App {
                                 System.out.println("Filme deletado com sucesso.");
                                 System.out.println();
                                 break;
+                            
+                            case 's':
+                                path.loadArvoreB();
+                                // SHOW THE TREE
 
                         }
 
