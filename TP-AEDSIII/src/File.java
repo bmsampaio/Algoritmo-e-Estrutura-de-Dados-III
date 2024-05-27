@@ -2,6 +2,12 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class File {
+    protected String database, mode;
+    //long p;
+    long pos = 0;
+    long fileSize = 0;
+    int len;
+    RandomAccessFile arq;
 
     protected String database, mode;
     long pos = 0;
@@ -18,19 +24,21 @@ public class File {
     }
 
     // create a RandonAccessFile
-    public void file() throws IOException {
+    public void file() throws IOException{
         arq = new RandomAccessFile(database, mode);
     }
 
-    public void createHeader(byte[] data) throws IOException {
+    public void createHeader(byte[] data) throws IOException{
+        arq.seek(0);
+        arq.write(data);
+    }  
+
+    public void updateHeader(byte[] data) throws IOException{
         arq.seek(0);
         arq.write(data);
     }
 
-    public void updateHeader(byte[] data) throws IOException {
-        arq.seek(0);
-        arq.write(data);
-    }
+
 
     // get the last used ID
     public Header getID(Header h) throws IOException {
@@ -77,11 +85,12 @@ public class File {
 
             while (point < fileSize) {
                 len = (arq.readInt() - 3);
+
                 pos = pos + 6;
                 arq.seek(pos);
                 char lapide = (char) arq.read();
-
-                if (lapide != '*') {
+                // verify if the file is valid
+                if(lapide != '*'){
                     pos = pos + 1;
                     arq.seek(pos);
                     byte[] readed = new byte[len];
@@ -116,18 +125,23 @@ public class File {
 
         if (lid < newMovie.id) {
             System.out.println("Não existe esse ID");
-        } else {
+        }
+        else {
             fileSize = arq.length();
-            pos = pos + 4;
-            point = arq.getFilePointer();
+            pos = pos+4;
 
+            // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
                 int oldlen = (arq.readInt() - 3);
+                pos = pos + 6;
+                arq.seek(pos);
+                //pm means position memo, save the position of "lapide"
+                long pm = pos;
+                char lapide = (char) arq.read();
 
-                arq.seek(pos + 6);
-                lapide = (char) arq.read();
-
-                if (lapide != '*') {
+                // verify if the file is valid
+                if(lapide != '*'){
+                    // walks to the beging of the data of the movie
                     pos = pos + 1;
                     arq.seek(pos);
                     byte[] readed = new byte[oldlen];
@@ -198,7 +212,6 @@ public class File {
                     arq.read(readed);
                     movie = new Dado();
                     movie.fromByteArray(readed);
-
                     if (movie.id == id) {
                         movie.lapide = "*";
                         pos = pm - 2;
@@ -214,6 +227,7 @@ public class File {
                     pos = pos + (len + 1);
                 }
             }
+
         }
     }
 
@@ -328,8 +342,10 @@ public class File {
             }
         }
         return 0;
-    }
+    }    
+}
 
+      
     // function to load the ArvoreB, where the keys are the movie IDs and the positions are the byte offsets of the movies in the file
     public void loadArvoreB() throws IOException {
         Arvore.Mostrar();

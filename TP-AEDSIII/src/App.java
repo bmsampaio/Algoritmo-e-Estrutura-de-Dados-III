@@ -6,7 +6,11 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Flow.Subscriber;
+
+import pck_txt.BinaryToTextConverter;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -22,6 +26,7 @@ public class App {
         path.file();
 
         Scanner scan = new Scanner(System.in);
+        char entry;
 
         
         System.out.println("É o seu primeiro acesso?");
@@ -83,18 +88,17 @@ public class App {
 
         while (option) {
             System.out.println("____________________ MENU DE OPÇÕES ____________________");
-            System.out.println("c - crud");
-            System.out.println("i - indicações de filmes similares");
+            System.out.println("1 - crud");
+            System.out.println("2 - indicações de filmes similares");
+            System.out.println("3 - LZW");
             System.out.println("ou qualquer outra tecla para encerrar");
             System.out.print("Escolha: ");
-            scan = new Scanner(System.in);
-            char entry;
-            entry = scan.next().charAt(0);
+            int escolha = scan.nextInt();
 
             try {
 
-                switch (entry) {
-                    case 'c':
+                switch (escolha) {
+                    case 1:
                         System.out.println("____________________ MENU CRUD ____________________");
                         System.out.println("c - create");
                         System.out.println("r - read");
@@ -258,16 +262,12 @@ public class App {
                                 System.out.println("Filme deletado com sucesso.");
                                 System.out.println();
                                 break;
-                            
-                            case 's':
-                                path.loadArvoreB();
-                                // SHOW THE TREE
 
                         }
 
                         break;
 
-                    case 'i':
+                    case 2:
                         System.out.println("");
                         System.out.println("Deseja buscar por um ano ou um gênero?");
                         System.out.println("a - ano");
@@ -293,6 +293,25 @@ public class App {
 
                         System.out.println();
                         System.out.println();
+                        break;
+
+                    // LZW
+                    case 3:
+                        //  create txt file
+                        BinaryToTextConverter.makeTxt();
+                        LZW lzw = new LZW();
+
+                        String inputFilePath = "file.txt";
+                        String encodedFilePath = "encoded_output.txt";
+                        String decodedFilePath = "decoded_output.txt";
+                        
+                        // Codificação
+                        lzw.encodeFile(inputFilePath, encodedFilePath);
+
+                        // Decodificação
+                        lzw.decodeFile(encodedFilePath, decodedFilePath);
+                        
+                        
                         break;
 
                     default:
