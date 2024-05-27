@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Flow.Subscriber;
 
 import pck_txt.BinaryToTextConverter;
 
@@ -297,6 +299,18 @@ public class App {
                     case 3:
                         //  create txt file
                         BinaryToTextConverter.makeTxt();
+                        LZW lzw = new LZW();
+
+                        String inputFilePath = "file.txt";
+                        String encodedFilePath = "encoded_output.txt";
+                        String decodedFilePath = "decoded_output.txt";
+                        
+                        // Codificação
+                        lzw.encodeFile(inputFilePath, encodedFilePath);
+
+                        // Decodificação
+                        lzw.decodeFile(encodedFilePath, decodedFilePath);
+                        
                         
                         break;
 

@@ -14,12 +14,10 @@ public class BinaryToTextConverter {
 
             int byteRead;
             while ((byteRead = fis.read()) != -1) {
-                // Converte o byte em uma representação hexadecimal e escreve no arquivo de texto
+                // convert byte to hex
                 String hexString = String.format("%02X", byteRead);
                 writer.write(hexString + " ");
             }
-
-            System.out.println("Conversão concluída com sucesso!");
 
         } catch (IOException e) {
             e.printStackTrace();
