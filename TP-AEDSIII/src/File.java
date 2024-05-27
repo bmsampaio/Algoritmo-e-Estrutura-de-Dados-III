@@ -3,14 +3,7 @@ import java.io.RandomAccessFile;
 
 public class File {
     protected String database, mode;
-    //long p;
-    long pos = 0;
-    long fileSize = 0;
-    int len;
-    RandomAccessFile arq;
-
-    protected String database, mode;
-    long pos = 0;
+    long pos = 0, pm = 0;
     long fileSize = 0;
     int len;
     RandomAccessFile arq;
@@ -117,7 +110,7 @@ public class File {
     public Dado update(Dado newMovie) throws IOException {
         Dado oldMovie = new Dado();
         char lapide;
-        int pm = 0;
+        pm = 0;
         pos = 0;
         arq.seek(pos);
         long point = arq.getFilePointer();
@@ -136,8 +129,8 @@ public class File {
                 pos = pos + 6;
                 arq.seek(pos);
                 //pm means position memo, save the position of "lapide"
-                long pm = pos;
-                char lapide = (char) arq.read();
+                pm = pos;
+                lapide = (char) arq.read();
 
                 // verify if the file is valid
                 if(lapide != '*'){
@@ -343,8 +336,6 @@ public class File {
         }
         return 0;
     }    
-}
-
       
     // function to load the ArvoreB, where the keys are the movie IDs and the positions are the byte offsets of the movies in the file
     public void loadArvoreB() throws IOException {
