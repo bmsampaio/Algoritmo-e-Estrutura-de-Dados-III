@@ -348,9 +348,9 @@ public class App {
                         RabinKarp rk = new RabinKarp();
                         long[] patternIndex = rk.searchPattern(txt, pat);
                         if (patternIndex[0] != -1) {
-                            System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + " miliseconds");
+                            System.out.println("Comparisons:: " + patternIndex[0]+ "\nTotal time: " + patternIndex[1] + " miliseconds");
                         } else {
-                            System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + " miliseconds");
+                            System.out.println("Padrão não encontrado no arquivo de dados. \nTotal time: " + patternIndex[1]  + " miliseconds");
                         }
                         
                         break;
