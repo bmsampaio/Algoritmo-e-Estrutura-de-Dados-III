@@ -338,6 +338,24 @@ public class App {
                         BruteForce.Result resultBF = bf.BruteForceSearch(txt, pat);
                         System.out.println("Comparisons: " + resultBF.getComparisons());
                         System.out.println("Total time (seconds): " + resultBF.getTotalTime());
+
+
+                        //Rabin Karp
+                        String filePath = "banco.db";
+                        RabinKarp rk = new RabinKarp();
+                        try {
+                            byte[] fileBytes = readFileBytes(filePath);
+                            String fileContent = new String(fileBytes);
+                
+                            long[] patternIndex = rk.searchPattern(fileContent, pat);
+                            if (patternIndex[0] != -1) {
+                                System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + "milisegundos");
+                            } else {
+                                System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + "milisegundos");
+                            }
+                        } catch (IOException e) {
+                            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+                        }
                         
                         break;
 
