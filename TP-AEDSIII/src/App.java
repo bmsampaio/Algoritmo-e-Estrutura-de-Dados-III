@@ -11,6 +11,9 @@ import java.util.Scanner;
 import java.util.concurrent.Flow.Subscriber;
 
 import pck_txt.BinaryToTextConverter;
+import pck_search.*;
+import pck_search.KMP.Result;
+
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -91,6 +94,7 @@ public class App {
             System.out.println("1 - crud");
             System.out.println("2 - indicações de filmes similares");
             System.out.println("3 - LZW");
+            System.out.println("4 - Busca por padrão");
             System.out.println("ou qualquer outra tecla para encerrar");
             System.out.print("Escolha: ");
             int escolha = scan.nextInt();
@@ -311,6 +315,26 @@ public class App {
                         // Decodificação
                         lzw.decodeFile(encodedFilePath, decodedFilePath);
                         
+                        
+                        break;
+
+                    case 4:
+                        System.out.println("");
+                        System.out.println("Qual o padrão que está buscando?");
+                        System.out.print("Padrão: ");
+                        String pat = reader.readLine();
+
+                        KMP kmp = new KMP();                
+                        Result resultKMP = kmp.KMPSearch(pat);
+                        System.out.println("Comparisons: " + resultKMP.getComparisons());
+                        System.out.println("Total time (seconds): " + resultKMP.getTotalTime());
+                        
+
+                        // Força Bruta
+                        BruteForce bf = new BruteForce();
+                        BruteForce.Result resultBF = bf.BruteForceSearch(pat);
+                        System.out.println("Comparisons: " + resultBF.getComparisons());
+                        System.out.println("Total time (seconds): " + resultBF.getTotalTime());
                         
                         break;
 

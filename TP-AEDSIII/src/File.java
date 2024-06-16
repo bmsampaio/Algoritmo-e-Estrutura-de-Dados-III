@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 public class File {
     protected String database, mode;
@@ -9,7 +10,8 @@ public class File {
     RandomAccessFile arq;
     public static ArvoreB Arvore = new ArvoreB(10);
 
-    public File() {}
+    public File() {
+    }
 
     public File(String database, String mode) {
         this.database = database;
@@ -17,21 +19,19 @@ public class File {
     }
 
     // create a RandonAccessFile
-    public void file() throws IOException{
+    public void file() throws IOException {
         arq = new RandomAccessFile(database, mode);
     }
 
-    public void createHeader(byte[] data) throws IOException{
-        arq.seek(0);
-        arq.write(data);
-    }  
-
-    public void updateHeader(byte[] data) throws IOException{
+    public void createHeader(byte[] data) throws IOException {
         arq.seek(0);
         arq.write(data);
     }
 
-
+    public void updateHeader(byte[] data) throws IOException {
+        arq.seek(0);
+        arq.write(data);
+    }
 
     // get the last used ID
     public Header getID(Header h) throws IOException {
@@ -83,7 +83,7 @@ public class File {
                 arq.seek(pos);
                 char lapide = (char) arq.read();
                 // verify if the file is valid
-                if(lapide != '*'){
+                if (lapide != '*') {
                     pos = pos + 1;
                     arq.seek(pos);
                     byte[] readed = new byte[len];
@@ -118,22 +118,21 @@ public class File {
 
         if (lid < newMovie.id) {
             System.out.println("Não existe esse ID");
-        }
-        else {
+        } else {
             fileSize = arq.length();
-            pos = pos+4;
+            pos = pos + 4;
 
             // scroll through the file until the end of the file
             while (arq.getFilePointer() < fileSize) {
                 int oldlen = (arq.readInt() - 3);
                 pos = pos + 6;
                 arq.seek(pos);
-                //pm means position memo, save the position of "lapide"
+                // pm means position memo, save the position of "lapide"
                 pm = pos;
                 lapide = (char) arq.read();
 
                 // verify if the file is valid
-                if(lapide != '*'){
+                if (lapide != '*') {
                     // walks to the beging of the data of the movie
                     pos = pos + 1;
                     arq.seek(pos);
@@ -335,9 +334,10 @@ public class File {
             }
         }
         return 0;
-    }    
-      
-    // function to load the ArvoreB, where the keys are the movie IDs and the positions are the byte offsets of the movies in the file
+    }
+
+    // function to load the ArvoreB, where the keys are the movie IDs and the
+    // positions are the byte offsets of the movies in the file
     public void loadArvoreB() throws IOException {
         Arvore.Mostrar();
     }
@@ -346,4 +346,6 @@ public class File {
     public void end() throws IOException {
         arq.close();
     }
+
+    
 }
