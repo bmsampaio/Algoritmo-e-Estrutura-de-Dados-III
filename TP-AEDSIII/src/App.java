@@ -324,27 +324,33 @@ public class App {
                         System.out.print("Padrão: ");
                         String pat = reader.readLine();
 
-                        String txt = BinaryToTextConverter.createTxtString();
-
-                        KMP kmp = new KMP();                
-                        Result resultKMP = kmp.KMPSearch(txt, pat);
-                        System.out.println("Comparisons: " + resultKMP.getComparisons());
-                        System.out.println("Total time (seconds): " + resultKMP.getTotalTime());
-                        
+                        String txt = BinaryToTextConverter.createTxtString();                    
 
                         // Força Bruta
+                        System.out.println("---------- BRUTE FORCE ----------");
                         BruteForce bf = new BruteForce();
                         BruteForce.Result resultBF = bf.BruteForceSearch(txt, pat);
                         System.out.println("Comparisons: " + resultBF.getComparisons());
-                        System.out.println("Total time (seconds): " + resultBF.getTotalTime());
+                        System.out.println("Total time (miliseconds): " + resultBF.getTotalTime());
+                        System.out.println();
+                        System.out.println();
+
+                        System.out.println("---------- KMP ----------");
+                        KMP kmp = new KMP();                
+                        Result resultKMP = kmp.KMPSearch(txt, pat);
+                        System.out.println("Comparisons: " + resultKMP.getComparisons());
+                        System.out.println("Total time (miliseconds): " + resultKMP.getTotalTime());
+                        System.out.println();
+                        System.out.println();
 
                         // Rabin Karp
+                        System.out.println("---------- RABIN KARP ----------");
                         RabinKarp rk = new RabinKarp();
                         long[] patternIndex = rk.searchPattern(txt, pat);
                         if (patternIndex[0] != -1) {
-                            System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + "milisegundos");
+                            System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + " miliseconds");
                         } else {
-                            System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + "milisegundos");
+                            System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + " miliseconds");
                         }
                         
                         break;

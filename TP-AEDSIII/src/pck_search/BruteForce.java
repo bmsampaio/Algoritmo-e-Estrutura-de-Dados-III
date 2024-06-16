@@ -41,7 +41,7 @@ public class BruteForce {
         }
 
         long endTime = System.currentTimeMillis();
-        long totalTime = (endTime - startTime) / 1000;
+        long totalTime = (endTime - startTime);
 
         return new Result(comparisons, totalTime);
     }

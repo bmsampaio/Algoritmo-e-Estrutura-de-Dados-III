@@ -55,7 +55,7 @@ public class KMP {
         }
 
         long finish = System.currentTimeMillis();
-        long total = (finish - start) / 1000;
+        long total = (finish - start);
         return new Result(comparisons, total);
     }
 
