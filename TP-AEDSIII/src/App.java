@@ -324,17 +324,28 @@ public class App {
                         System.out.print("Padrão: ");
                         String pat = reader.readLine();
 
+                        String txt = BinaryToTextConverter.createTxtString();
+
                         KMP kmp = new KMP();                
-                        Result resultKMP = kmp.KMPSearch(pat);
+                        Result resultKMP = kmp.KMPSearch(txt, pat);
                         System.out.println("Comparisons: " + resultKMP.getComparisons());
                         System.out.println("Total time (seconds): " + resultKMP.getTotalTime());
                         
 
                         // Força Bruta
                         BruteForce bf = new BruteForce();
-                        BruteForce.Result resultBF = bf.BruteForceSearch(pat);
+                        BruteForce.Result resultBF = bf.BruteForceSearch(txt, pat);
                         System.out.println("Comparisons: " + resultBF.getComparisons());
                         System.out.println("Total time (seconds): " + resultBF.getTotalTime());
+
+                        // Rabin Karp
+                        RabinKarp rk = new RabinKarp();
+                        long[] patternIndex = rk.searchPattern(txt, pat);
+                        if (patternIndex[0] != -1) {
+                            System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + "milisegundos");
+                        } else {
+                            System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + "milisegundos");
+                        }
                         
                         break;
 

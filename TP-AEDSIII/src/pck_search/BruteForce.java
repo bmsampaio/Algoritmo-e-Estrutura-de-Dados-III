@@ -20,8 +20,7 @@ public class BruteForce {
         }
     }
 
-    public Result BruteForceSearch(String pat) {
-        String txt = "10010110100010100111000111001011010001010011100011";
+    public Result BruteForceSearch(String txt, String pat) {
         int M = pat.length();
         int N = txt.length();
         int comparisons = 0;
