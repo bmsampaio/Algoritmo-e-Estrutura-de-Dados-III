@@ -324,15 +324,18 @@ public class App {
                         System.out.print("Padrão: ");
                         String pat = reader.readLine();
 
+                        String txt = BinaryToTextConverter.createTxtString();
+
+                        // KMP
                         KMP kmp = new KMP();                
-                        Result resultKMP = kmp.KMPSearch(pat);
+                        Result resultKMP = kmp.KMPSearch(txt, pat);
                         System.out.println("Comparisons: " + resultKMP.getComparisons());
                         System.out.println("Total time (seconds): " + resultKMP.getTotalTime());
                         
 
                         // Força Bruta
                         BruteForce bf = new BruteForce();
-                        BruteForce.Result resultBF = bf.BruteForceSearch(pat);
+                        BruteForce.Result resultBF = bf.BruteForceSearch(txt, pat);
                         System.out.println("Comparisons: " + resultBF.getComparisons());
                         System.out.println("Total time (seconds): " + resultBF.getTotalTime());
                         

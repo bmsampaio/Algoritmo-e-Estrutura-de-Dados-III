@@ -23,5 +23,21 @@ public class BinaryToTextConverter {
             e.printStackTrace();
         }
     }
+
+    public static String createTxtString() {
+        String filePath = "banco.db";
+        String text = null;
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            byte[] bytes = fis.readAllBytes();
+
+            // Converting bytes to a txt String using UTF-8 pattern
+            text = new String(bytes, "UTF-8");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return text;
+    }
 }
 

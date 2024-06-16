@@ -22,9 +22,9 @@ public class KMP {
         }
     }
 
-    public Result KMPSearch(String pat) {
+    public Result KMPSearch(String txt, String pat) {
+        // String txt = "10010110100010100111000111001011010001010011100011";
         int M = pat.length() + 1;
-        String txt = "10010110100010100111000111001011010001010011100011";
         long N = txt.length();
 
         int[] lps = new int[M];
