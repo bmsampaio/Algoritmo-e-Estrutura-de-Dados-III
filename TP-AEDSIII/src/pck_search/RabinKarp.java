@@ -15,24 +15,27 @@ public class RabinKarp {
         int textLength = text.length();
         long patternHash = calculateHash(pattern);
         long textHash = calculateHash(text.substring(0, patternLength));
-        long pos = 0;
+        int pos = 0;
+        int comparisons = 0;
 
         // loop to check if the hash of the pattern is equal to the hash of the first part of the text
         for (int i = 0; i <= textLength - patternLength; i++) {
             // check if the hash of the pattern is equal to the hash of the part of the text
             if (patternHash == textHash && pattern.equals(text.substring(i, i + patternLength))) {
+                comparisons++;
                 end = System.currentTimeMillis();
                 timeElapsed = end - start;
-                return new long[]{i,timeElapsed};
+                return new long[]{i,timeElapsed,comparisons};
             }
             // otherwise, recalculate the hash of the text
             if (i < textLength - patternLength) {
+                comparisons++;
                 textHash = recalculateHash(textHash, text.charAt(i), text.charAt(i + patternLength), patternLength);
             }
         }
         end = System.currentTimeMillis();
         timeElapsed = end - start;
-        return new long[]{-1,timeElapsed};
+        return new long[]{-1,timeElapsed,comparisons};
     }
 
     //function to calculate the hash 
