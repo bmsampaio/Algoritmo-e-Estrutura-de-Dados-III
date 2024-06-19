@@ -142,6 +142,7 @@ public class File {
                     Arvore.remover(oldMovie.id, pos);
 
                     if (oldMovie.id == newMovie.id) {
+                        newMovie.lapide = "-";
                         byte[] register = newMovie.toByteArray();
                         int tamanho = register.length;
 
@@ -255,12 +256,19 @@ public class File {
         pos = existingAdress;
         arq.seek(pos);
         byte[] readed;
+        len = (arq.readInt() - 3);
+        arq.seek(pos + 7);
+        readed = new byte[len];
+        arq.read(readed);
+        movie.fromByteArray(readed);
 
         boolean b = true;
+        outerLoop:
         for (int i = 0; i < movie.quantityGenre; i++) {
             b = true;
             while (b) {
-                
+                movie = new Dado();
+                arq.seek(pos);
                 len = (arq.readInt() - 3);
                 arq.seek(pos + 7);
                 readed = new byte[len];
@@ -270,10 +278,12 @@ public class File {
                 if (movie.genres[i].equalsIgnoreCase(genre)) {
                     if (movie.linkGenre[i] == -1) {
                         movie.linkGenre[i] = newAdress;
-                        b = false;
+                        // update(movie);
+                        break outerLoop;
+
                     } else {
                         pos = movie.linkGenre[i];
-                        arq.seek(pos);
+                        i = 0;
                     }
                 } else {
                     b = false;
@@ -281,7 +291,7 @@ public class File {
             }
         }
 
-        // movie.lapide = "-";
+        movie.lapide = "-";
         update(movie);
     }
 
