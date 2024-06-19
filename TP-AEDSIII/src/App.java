@@ -343,14 +343,14 @@ public class App {
                         System.out.println();
                         System.out.println();
 
-                        // Rabin Karp
+                       // Rabin Karp
                         System.out.println("---------- RABIN KARP ----------");
                         RabinKarp rk = new RabinKarp();
                         long[] patternIndex = rk.searchPattern(txt, pat);
                         if (patternIndex[0] != -1) {
-                            System.out.println("Padrão encontrado na posição: " + patternIndex[0]+ "\nTempo de execução: " + patternIndex[1] + " miliseconds");
+                            System.out.println("Found pattern at index " + patternIndex[0] + "\nComparisons: " + patternIndex[2]+ "\nTotal time (miliseconds): " + patternIndex[1]);
                         } else {
-                            System.out.println("Padrão não encontrado no arquivo de dados. \nTempo de execução: " + patternIndex[1]  + " miliseconds");
+                            System.out.println("Pattern not founded.\nComparisons: " + patternIndex[2] + "\nTotal time (miliseconds): " + patternIndex[1]);
                         }
                         
                         break;
