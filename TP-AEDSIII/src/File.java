@@ -254,18 +254,19 @@ public class File {
         Dado movie = new Dado();
         pos = existingAdress;
         arq.seek(pos);
-
         byte[] readed;
-        len = (arq.readInt() - 3);
-        arq.seek(pos + 7);
-        readed = new byte[len];
-        arq.read(readed);
-        movie.fromByteArray(readed);
 
         boolean b = true;
         for (int i = 0; i < movie.quantityGenre; i++) {
             b = true;
             while (b) {
+                
+                len = (arq.readInt() - 3);
+                arq.seek(pos + 7);
+                readed = new byte[len];
+                arq.read(readed);
+                movie.fromByteArray(readed);
+                
                 if (movie.genres[i].equalsIgnoreCase(genre)) {
                     if (movie.linkGenre[i] == -1) {
                         movie.linkGenre[i] = newAdress;
@@ -280,7 +281,7 @@ public class File {
             }
         }
 
-        movie.lapide = "-";
+        // movie.lapide = "-";
         update(movie);
     }
 
@@ -299,6 +300,7 @@ public class File {
             movie.fromByteArray(readedMovie);
 
             System.out.println(movie.toString());
+            System.out.println();
             if (movie.linkYear != -1)
                 showYears(movie.linkYear);
         }
@@ -321,6 +323,7 @@ public class File {
             int i = getPosition(genre, movie);
 
             System.out.println(movie.toString());
+            System.out.println();
 
             if (movie.linkGenre[i] != -1)
                 showYears(movie.linkGenre[i]);

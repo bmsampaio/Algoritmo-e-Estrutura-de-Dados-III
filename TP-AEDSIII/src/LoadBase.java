@@ -10,6 +10,8 @@ public class LoadBase{
     public static Dado[] dado = new Dado[10000];
     public static File file = new File();
 
+    static String[] genres;
+
     // function treat the data and call the function to load the data in the database
     public static void tratarBase(String str, int i) throws Exception{
         Date data = null;
@@ -18,7 +20,7 @@ public class LoadBase{
         LocalDate localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         String overview = str.split(";")[3];
         int popularity = Integer.parseInt(str.split(";")[4]);
-        String[] genres = str.split(";")[5].split(",");
+        genres = str.split(";")[5].split(",");
         int quantityGenre = genres.length;
         loadDatabase(i,title, localDate, overview, popularity,quantityGenre, genres);
     }
@@ -44,9 +46,37 @@ public class LoadBase{
         }
 
         movie = new Dado(h.lastID, title, localDate, overview, popularity,quantityGenre, genre);
-        path.create(movie);
+        long end = path.create(movie);
         h.updateID();
         b = h.toByteArray();
         path.updateHeader(b);
+
+        
+        MlYear mlY;
+        MlFile mlFileYear = new MlFile("MLYear.db", "rw");
+        mlFileYear.file();
+        mlY = new MlYear(movie.release.getYear(), end);
+        String[] resultY = mlFileYear.setData(mlY);
+        if (resultY != null) {
+            long existingAdress = Long.parseLong(resultY[0]);
+            long newAdress = Long.parseLong(resultY[1]);
+            path.updateLinkY(existingAdress, newAdress);
+        }
+
+        // Genre multilist
+        MlGenre mlG;
+        MlFileGenre mlFileGenre = new MlFileGenre("MLGenre.db", "rw");
+        mlFileGenre.file();
+        for (int j = 0; j < genres.length; j++) {
+            mlG = new MlGenre(movie.genres[j], end);
+            String[] resultG = mlFileGenre.setData(mlG);
+
+            if (resultG != null) {
+                System.out.println();
+                long existingAdress = Long.parseLong(resultG[0]);
+                long newAdress = Long.parseLong(resultG[1]);
+                path.updateLinkG(movie.genres[j], existingAdress, newAdress);
+            }
+        }
     }
 }
