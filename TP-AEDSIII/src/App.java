@@ -260,6 +260,15 @@ public class App {
                                 System.out.print("Informe o ID a ser deletado: ");
                                 id = scan.nextInt();
 
+                                movie = path.read(id);
+                                int year = movie.release.getYear();
+                                long beginAdress = mlFileYear.searchYear(year);
+
+                                long newBegin = path.prerequisitos(beginAdress, movie);
+                                if(newBegin != 0){
+                                  mlFileYear.pre(movie.release.getYear(), newBegin);  
+                                }
+                                
                                 path.delete(id);
 
                                 System.out.println();
