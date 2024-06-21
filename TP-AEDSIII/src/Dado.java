@@ -37,6 +37,19 @@ public class Dado {
         }
     }
 
+    public Dado(Dado oldMovie) {
+        lapide = oldMovie.lapide;
+        id = oldMovie.id;
+        title = oldMovie.title;
+        release = oldMovie.release;
+        linkYear = oldMovie.linkYear;
+        overview = oldMovie.overview;
+        popularity = oldMovie.popularity;
+        quantityGenre = oldMovie.quantityGenre;
+        genres = oldMovie.genres;
+        linkGenre = oldMovie.linkGenre;
+    }
+
     public String toString() {
         return "id: " + this.id + " | name: " + this.title + " | release: " + release + " | overview: " + this.overview + " | popularidade: " + popularity + " | quantidade de generos: " + quantityGenre + " | generos: " + Arrays.toString(genres) ;
     }

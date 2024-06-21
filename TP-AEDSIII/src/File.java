@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 public class File {
@@ -358,6 +359,46 @@ public class File {
     // procedure to close the RandomAceesFile (arq)
     public void end() throws IOException {
         arq.close();
+    }
+
+    public long prerequisitos(long beginAdress, Dado deletedMovie) throws IOException {
+        Dado currentMovie = new Dado();
+        Dado beforeMovie = new Dado();
+        Dado afterMovie = new Dado();
+        
+        pos = beginAdress;
+        arq.seek(pos);
+
+        byte[] readedMovie;
+        len = (arq.readInt() - 3);
+        arq.seek(pos + 7);
+        readedMovie = new byte[len];
+        arq.read(readedMovie);
+        currentMovie.fromByteArray(readedMovie);
+
+        // é o primeiro
+        if(currentMovie.id == deletedMovie.id) {
+            return currentMovie.linkYear;
+        }
+        while (currentMovie.id != deletedMovie.id) {
+            // o atual passa a ser o anterior
+            beforeMovie = new Dado(currentMovie);
+
+            // pega um novo filme
+            pos = beforeMovie.linkYear;
+            arq.seek(pos);
+            len = (arq.readInt() - 3);
+            arq.seek(pos + 7);
+            readedMovie = new byte[len];
+            arq.read(readedMovie);
+            currentMovie.fromByteArray(readedMovie);
+            
+        }
+
+        beforeMovie.linkYear = currentMovie.linkYear;
+        update(beforeMovie);
+
+        return 0;
     }
 
     

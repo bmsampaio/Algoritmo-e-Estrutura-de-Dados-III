@@ -96,4 +96,32 @@ public class MlFile {
 
         return 0;
     }
+
+    public void pre(int year, long beginAdress) throws IOException {
+        long pos = 0;
+        long adress = 0;
+        arq.seek(pos);
+        MlYear readedMLY = new MlYear();
+
+        while (readedMLY.year != year) {
+            byte[] mlY;
+            len = 16;
+            mlY = new byte[len];
+            arq.read(mlY);
+            readedMLY.fromByteArray(mlY);
+            pos = pos+16;
+        }
+
+        if(beginAdress == 0){
+            readedMLY.quantity = readedMLY.quantity - 1;
+            adress = pos - 16;
+        }
+        else {
+            readedMLY.quantity = readedMLY.quantity - 1;
+            readedMLY.adress = beginAdress;
+            adress = pos - 16;
+        }
+
+        updateMlFile(readedMLY, adress);
+    }
 }

@@ -17,8 +17,8 @@ public class MlYear {
 
     public MlYear(int year, long adress){
         this.year = year;
-        this.adress = adress;
         this.quantity = 1;
+        this.adress = adress;
     }
 
     public String toString() {
