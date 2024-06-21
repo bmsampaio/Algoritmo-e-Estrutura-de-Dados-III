@@ -225,6 +225,7 @@ public class File {
         }
     }
 
+    // update the pointet of the linked Year
     public void updateLinkY(long existingAdress, long newAdress) throws IOException {
         Dado movie = new Dado();
         pos = existingAdress;
@@ -239,10 +240,13 @@ public class File {
             arq.read(readed);
             movie.fromByteArray(readed);
 
+            // seacrh for the last entered movie with the year release
             if (movie.linkYear == -1) {
+                // set the link to the next data
                 movie.linkYear = newAdress;
                 b = false;
             } else {
+                // if is not the last one, search for the next using the year ponter
                 pos = movie.linkYear;
                 arq.seek(pos);
             }
@@ -252,6 +256,7 @@ public class File {
         update(movie);
     }
 
+    // update the pointet of the linked Genre
     public void updateLinkG(String genre, long existingAdress, long newAdress) throws IOException {
         Dado movie = new Dado();
         pos = existingAdress;
@@ -265,6 +270,7 @@ public class File {
 
         boolean b = true;
         outerLoop:
+        // seach at each link genre of the file
         for (int i = 0; i < movie.quantityGenre; i++) {
             b = true;
             while (b) {
@@ -276,13 +282,16 @@ public class File {
                 arq.read(readed);
                 movie.fromByteArray(readed);
                 
+                // seacrh for the last entered movie with the genre
                 if (movie.genres[i].equalsIgnoreCase(genre)) {
                     if (movie.linkGenre[i] == -1) {
+                        // set the link to the next data
                         movie.linkGenre[i] = newAdress;
-                        // update(movie);
+                        // breke out the loop because the link was made
                         break outerLoop;
 
                     } else {
+                        // if is not the last one, search for the next using the year ponter
                         pos = movie.linkGenre[i];
                         i = 0;
                     }
@@ -296,6 +305,7 @@ public class File {
         update(movie);
     }
 
+    // Show all the movies released at the informed year
     public void showYears(long position) throws IOException {
         if (position == 0)
             System.out.println("Nenhum filme lançado neste ano");
@@ -312,11 +322,13 @@ public class File {
 
             System.out.println(movie.toString());
             System.out.println();
+            // recursive call to keep calling the procedure until it's the last linked year
             if (movie.linkYear != -1)
                 showYears(movie.linkYear);
         }
     }
 
+    // Show all the movies with the informed genre
     public void showGenres(long position, String genre) throws IOException {
         if (position == 0)
             System.out.println("Nenhum filme com esse gênero");
@@ -336,11 +348,13 @@ public class File {
             System.out.println(movie.toString());
             System.out.println();
 
+            // recursive call to keep calling the procedure until it's the last linked year
             if (movie.linkGenre[i] != -1)
                 showGenres(movie.linkGenre[i], movie.genres[i]);
         }
     }
 
+    // get the position where occour the first apperence of the genre
     private int getPosition(String genre, Dado movie) {
         for (int i = 0; i < movie.quantityGenre; i++) {
             if (movie.genres[i].equalsIgnoreCase(genre)) {
@@ -361,7 +375,8 @@ public class File {
         arq.close();
     }
 
-    public long prerequisitos(long beginAdress, Dado deletedMovie) throws IOException {
+    // adjust the pointer when a Year File changes
+    public long adjustYearPointer(long beginAdress, Dado deletedMovie) throws IOException {
         Dado currentMovie = new Dado();
         Dado beforeMovie = new Dado();
         
@@ -375,15 +390,16 @@ public class File {
         arq.read(readedMovie);
         currentMovie.fromByteArray(readedMovie);
 
-        // é o primeiro
+        // if true, the movie is the firt occurrence, so need to change at the ML File Year
         if(currentMovie.id == deletedMovie.id) {
             return currentMovie.linkYear;
         }
+        // search the movie to be changed
         while (currentMovie.id != deletedMovie.id) {
-            // o atual passa a ser o anterior
+            // the current one becomes the previous one 
             beforeMovie = new Dado(currentMovie);
 
-            // pega um novo filme
+            // get a new movie
             pos = beforeMovie.linkYear;
             arq.seek(pos);
             len = (arq.readInt() - 3);
@@ -393,13 +409,16 @@ public class File {
             currentMovie.fromByteArray(readedMovie);
         }
 
+        // the previous movie receive the pointer of the current movie
         beforeMovie.linkYear = currentMovie.linkYear;
+        // update the previous movie
         update(beforeMovie);
 
         return 0;
     }
 
-    public long prerequisitosGenre(long beginGenreAdress, Dado deletedMovie, int order) throws IOException {
+    // adjust the pointer when a Movie File changes
+    public long adjustGenrePointer(long beginGenreAdress, Dado deletedMovie, int order) throws IOException {
         Dado currentMovie = new Dado();
         Dado beforeMovie = new Dado();
 
@@ -414,18 +433,22 @@ public class File {
         arq.read(readedMovie);
         currentMovie.fromByteArray(readedMovie);
 
-         // é o primeiro
+         // if true, the movie is the firt occurrence, so need to change at the ML File Genre
          if(currentMovie.id == deletedMovie.id) {
+            // search for which position of the array of genres is necessary to change
             for(int i = 0; i < currentMovie.linkGenre.length; i++) {
+                // if find, return the pointer of the genre
                 if(currentMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order]))
                     return currentMovie.linkGenre[i];
             }
         }
+
+        // search the movie to be changed
         while (currentMovie.id != deletedMovie.id) {
-            // o atual passa a ser o anterior
+            // the current one becomes the previous one 
             beforeMovie = new Dado(currentMovie);
 
-            // pega um novo filme
+            // get a new movie
             for(int i = 0; i < beforeMovie.linkGenre.length; i++) {
                 if(beforeMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order])) {
                     pos = beforeMovie.linkGenre[i];
@@ -441,6 +464,7 @@ public class File {
             currentMovie.fromByteArray(readedMovie);
         }
 
+        // find the occurrence of the genre at the movie
         for(int i = 0; i < currentMovie.linkGenre.length; i++) {
             if(currentMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order])) {
                 pos = beforeMovie.linkGenre[i];
@@ -448,6 +472,7 @@ public class File {
             }              
         }
 
+        // the previous movie receive the pointer of the current movie
         beforeMovie.linkGenre[local] = currentMovie.linkGenre[local2];
         update(beforeMovie);
 

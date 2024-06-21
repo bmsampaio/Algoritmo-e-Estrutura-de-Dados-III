@@ -262,32 +262,29 @@ public class App {
 
                                 movie = path.read(id);
 
-                                // Year
-                                // int year = movie.release.getYear();
-                                // long beginYearAdress = mlFileYear.searchYear(year);
-                                // long newBegin = path.prerequisitos(beginYearAdress, movie);
-                                // mlFileYear.pre(movie.release.getYear(), newBegin);  
+                                // Adjusting the Year Multilist
+                                int year = movie.release.getYear();
+                                // search the first adress of this year
+                                long beginYearAdress = mlFileYear.searchYear(year);
+                                // get the new first position to the year multilist
+                                long newYearBegin = path.adjustYearPointer(beginYearAdress, movie);
+                                mlFileYear.correctFileYear(movie.release.getYear(), newYearBegin);  
 
-                                // Genre
-
-                                String[] gen = new String[movie.genres.length];
-
-                                for(int i = 0; i < gen.length; i++){
-                                    gen[i] = movie.genres[i];
+                                // Adjusting the Genre Multilist
+                                String[] auxGenres = new String[movie.genres.length];
+                                for(int i = 0; i < auxGenres.length; i++){
+                                    auxGenres[i] = movie.genres[i];
                                 }
-                                for(int i = 0; i < gen.length; i++) {
-                                    long beginGenreAdress = mlFileGenre.searchGenre(gen[i]);
-                                    long newBegin = path.prerequisitosGenre(beginGenreAdress, movie, i);
-                                    mlFileGenre.pre(movie.genres[i], newBegin); 
-                                    break;
+                                // repeat the cycle for every genre of the movie
+                                for(int i = 0; i < auxGenres.length; i++) {
+                                    // search the firs adress of the genre
+                                    long beginGenreAdress = mlFileGenre.searchGenre(auxGenres[i]);
+                                    // get the new firts position to the genre multilist
+                                    long newGenreBegin = path.adjustGenrePointer(beginGenreAdress, movie, i);
+                                    mlFileGenre.correctFileGenre(movie.genres[i], newGenreBegin);
                                 }
                                 
-                                
-
-                                
-
-                                
-                                // path.delete(id);
+                                path.delete(id);
 
                                 System.out.println();
                                 System.out.println("Filme deletado com sucesso.");
@@ -336,10 +333,10 @@ public class App {
                         String encodedFilePath = "encoded_output.txt";
                         String decodedFilePath = "decoded_output.txt";
                         
-                        // Codificação
+                        // Encode
                         lzw.encodeFile(inputFilePath, encodedFilePath);
 
-                        // Decodificação
+                        // Decode
                         lzw.decodeFile(encodedFilePath, decodedFilePath);
                         
                         
@@ -353,7 +350,7 @@ public class App {
 
                         String txt = BinaryToTextConverter.createTxtString();                    
 
-                        // Força Bruta
+                        // Search pattern by Brute Force
                         System.out.println("---------- BRUTE FORCE ----------");
                         BruteForce bf = new BruteForce();
                         BruteForce.Result resultBF = bf.BruteForceSearch(txt, pat);
@@ -362,6 +359,7 @@ public class App {
                         System.out.println();
                         System.out.println();
 
+                        // Search pattern by KMP
                         System.out.println("---------- KMP ----------");
                         KMP kmp = new KMP();                
                         Result resultKMP = kmp.KMPSearch(txt, pat);
@@ -370,7 +368,7 @@ public class App {
                         System.out.println();
                         System.out.println();
 
-                       // Rabin Karp
+                       // // Search pattern by Rabin Karp
                         System.out.println("---------- RABIN KARP ----------");
                         RabinKarp rk = new RabinKarp();
                         long[] patternIndex = rk.searchPattern(txt, pat);
