@@ -92,4 +92,37 @@ public class MlFileGenre {
         
         return 0;
     }
+
+    
+
+    public void pre(String genre, long beginAdress) throws IOException {
+        long pos = 0;
+        long adress = 0;
+        arq.seek(pos);
+
+        MlGenre readedMlGenre = new MlGenre();
+
+        while (readedMlGenre.genre == null || !readedMlGenre.genre.equalsIgnoreCase(genre)) {
+            byte[] mlG;
+            len = arq.readInt();
+            mlG = new byte[len];
+            arq.read(mlG);
+            readedMlGenre.fromByteArray(mlG);
+            pos = pos + len + 4;
+        }
+
+        if(beginAdress == 0) {
+            readedMlGenre.quantity = readedMlGenre.quantity -1;
+            adress = pos - len - 4;
+        }
+        else {
+            readedMlGenre.quantity = readedMlGenre.quantity -1;
+            readedMlGenre.adress = beginAdress;
+            adress = pos - len - 4;
+        }
+
+        updateMlFile(readedMlGenre, adress);
+        
+    }
+
 }

@@ -261,14 +261,33 @@ public class App {
                                 id = scan.nextInt();
 
                                 movie = path.read(id);
-                                int year = movie.release.getYear();
-                                long beginAdress = mlFileYear.searchYear(year);
 
-                                long newBegin = path.prerequisitos(beginAdress, movie);
+                                // Year
+                                // int year = movie.release.getYear();
+                                // long beginYearAdress = mlFileYear.searchYear(year);
+                                // long newBegin = path.prerequisitos(beginYearAdress, movie);
+                                // mlFileYear.pre(movie.release.getYear(), newBegin);  
+
+                                // Genre
+
+                                String[] gen = new String[movie.genres.length];
+
+                                for(int i = 0; i < gen.length; i++){
+                                    gen[i] = movie.genres[i];
+                                }
+                                for(int i = 0; i < gen.length; i++) {
+                                    long beginGenreAdress = mlFileGenre.searchGenre(gen[i]);
+                                    long newBegin = path.prerequisitosGenre(beginGenreAdress, movie, i);
+                                    mlFileGenre.pre(movie.genres[i], newBegin); 
+                                    break;
+                                }
                                 
-                                mlFileYear.pre(movie.release.getYear(), newBegin);  
                                 
-                                path.delete(id);
+
+                                
+
+                                
+                                // path.delete(id);
 
                                 System.out.println();
                                 System.out.println("Filme deletado com sucesso.");
@@ -300,7 +319,7 @@ public class App {
                             System.out.print("Informe o genero: ");
                             String searchGenre = reader.readLine();
                             pos = mlFileGenre.searchGenre(searchGenre);
-                            path.showGenres(pos, "acao");
+                            path.showGenres(pos, searchGenre);
                         }
 
                         System.out.println();

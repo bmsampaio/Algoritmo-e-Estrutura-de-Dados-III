@@ -337,7 +337,7 @@ public class File {
             System.out.println();
 
             if (movie.linkGenre[i] != -1)
-                showYears(movie.linkGenre[i]);
+                showGenres(movie.linkGenre[i], movie.genres[i]);
         }
     }
 
@@ -394,6 +394,61 @@ public class File {
         }
 
         beforeMovie.linkYear = currentMovie.linkYear;
+        update(beforeMovie);
+
+        return 0;
+    }
+
+    public long prerequisitosGenre(long beginGenreAdress, Dado deletedMovie, int order) throws IOException {
+        Dado currentMovie = new Dado();
+        Dado beforeMovie = new Dado();
+
+        pos = beginGenreAdress;
+        arq.seek(pos);
+        int local = 0, local2 = 0;
+
+        byte[] readedMovie;
+        len = (arq.readInt() - 3);
+        arq.seek(pos + 7);
+        readedMovie = new byte[len];
+        arq.read(readedMovie);
+        currentMovie.fromByteArray(readedMovie);
+
+         // é o primeiro
+         if(currentMovie.id == deletedMovie.id) {
+            for(int i = 0; i < currentMovie.linkGenre.length; i++) {
+                if(currentMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order]))
+                    return currentMovie.linkGenre[i];
+            }
+        }
+        while (currentMovie.id != deletedMovie.id) {
+            // o atual passa a ser o anterior
+            beforeMovie = new Dado(currentMovie);
+
+            // pega um novo filme
+            for(int i = 0; i < beforeMovie.linkGenre.length; i++) {
+                if(beforeMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order])) {
+                    pos = beforeMovie.linkGenre[i];
+                    local = i;
+                }
+                     
+            }
+            arq.seek(pos);
+            len = (arq.readInt() - 3);
+            arq.seek(pos + 7);
+            readedMovie = new byte[len];
+            arq.read(readedMovie);
+            currentMovie.fromByteArray(readedMovie);
+        }
+
+        for(int i = 0; i < currentMovie.linkGenre.length; i++) {
+            if(currentMovie.genres[i].equalsIgnoreCase(deletedMovie.genres[order])) {
+                pos = beforeMovie.linkGenre[i];
+                local2 = i;
+            }              
+        }
+
+        beforeMovie.linkGenre[local] = currentMovie.linkGenre[local2];
         update(beforeMovie);
 
         return 0;
