@@ -364,7 +364,6 @@ public class File {
     public long prerequisitos(long beginAdress, Dado deletedMovie) throws IOException {
         Dado currentMovie = new Dado();
         Dado beforeMovie = new Dado();
-        Dado afterMovie = new Dado();
         
         pos = beginAdress;
         arq.seek(pos);
@@ -392,7 +391,6 @@ public class File {
             readedMovie = new byte[len];
             arq.read(readedMovie);
             currentMovie.fromByteArray(readedMovie);
-            
         }
 
         beforeMovie.linkYear = currentMovie.linkYear;

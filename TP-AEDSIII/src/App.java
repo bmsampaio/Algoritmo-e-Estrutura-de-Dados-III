@@ -265,9 +265,8 @@ public class App {
                                 long beginAdress = mlFileYear.searchYear(year);
 
                                 long newBegin = path.prerequisitos(beginAdress, movie);
-                                if(newBegin != 0){
-                                  mlFileYear.pre(movie.release.getYear(), newBegin);  
-                                }
+                                
+                                mlFileYear.pre(movie.release.getYear(), newBegin);  
                                 
                                 path.delete(id);
 
