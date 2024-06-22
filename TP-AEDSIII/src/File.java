@@ -108,7 +108,7 @@ public class File {
     }
 
     // update from the CRUD
-    public Dado update(Dado newMovie) throws IOException {
+    public void update(Dado newMovie) throws IOException {
         Dado oldMovie = new Dado();
         char lapide;
         pm = 0;
@@ -142,21 +142,26 @@ public class File {
                     oldMovie.fromByteArray(readed);
                     Arvore.remover(oldMovie.id, pos);
 
+                    // Verify if it's the same ID
                     if (oldMovie.id == newMovie.id) {
                         newMovie.lapide = "-";
                         byte[] register = newMovie.toByteArray();
                         int tamanho = register.length;
 
+                        // verify if it's possible to overcome the current information considerin the new information size
                         if ((oldlen + 3) >= tamanho) {
                             pos = pm - 2;
                             arq.seek(pos);
                             fileUpdate(register);
                             break;
+                        // if the new file doesn't fit, save by the end of the file
                         } else {
+                            // sign the "lápide" as no longer valid
                             pos = pm - 1;
                             arq.seek(pos);
                             arq.writeChar('*');
 
+                            // go to the end of the file and save the new inforation
                             pos = fileSize - 1;
                             arq.seek(pos);
                             create(newMovie);
@@ -172,7 +177,6 @@ public class File {
             }
         }
         Arvore.inserir(newMovie.id, pos);
-        return null;
     }
 
     // delete from the CRUD

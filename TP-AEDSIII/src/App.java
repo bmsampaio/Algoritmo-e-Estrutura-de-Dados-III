@@ -243,16 +243,16 @@ public class App {
                                 genres = genre.split(",");
                                 movie = new Dado(updateID, title, localDate, overview, popularity, quantityGenre,
                                         genres);
-                                movie = path.update(movie);
-                                if (movie == null) {
-                                    System.out.println();
-                                    System.out.println("Filme não encontrado");
-                                    System.out.println();
-                                } else {
+                                path.update(movie);
+                                // if (movie == null) {
+                                //     System.out.println();
+                                //     System.out.println("Filme não encontrado");
+                                //     System.out.println();
+                                // } else {
                                     System.out.println();
                                     System.out.println("Filme '" + movie.title + "' atualizado com sucesso.");
                                     System.out.println();
-                                }
+                                // }
                                 break;
 
                             // DELETE
@@ -275,7 +275,7 @@ public class App {
                                 for(int i = 0; i < auxGenres.length; i++){
                                     auxGenres[i] = movie.genres[i];
                                 }
-                                // repeat the cycle for every genre of the movie
+                                // repeat the cycle for each genre of the movie
                                 for(int i = 0; i < auxGenres.length; i++) {
                                     // search the firs adress of the genre
                                     long beginGenreAdress = mlFileGenre.searchGenre(auxGenres[i]);
