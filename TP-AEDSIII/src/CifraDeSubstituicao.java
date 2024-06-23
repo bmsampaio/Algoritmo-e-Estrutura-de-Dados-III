@@ -4,7 +4,7 @@ public class CifraDeSubstituicao {
     private static final String CHAVE = "ZxCvBnMaSdFgHjKlQwErTyUiOpPoIuYtReWqQaZxCvBnMlKjHgFdS";
 
     public static String cifrar(String texto) {
-        String textoCifrado = new StringBuilder();
+        StringBuilder textoCifrado = new StringBuilder();
 
         for (int i = 0; i < texto.length(); i++) {
             char caractere = texto.charAt(i);
