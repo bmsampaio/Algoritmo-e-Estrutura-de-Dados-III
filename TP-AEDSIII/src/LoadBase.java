@@ -72,7 +72,6 @@ public class LoadBase{
             String[] resultG = mlFileGenre.setData(mlG);
 
             if (resultG != null) {
-                System.out.println();
                 long existingAdress = Long.parseLong(resultG[0]);
                 long newAdress = Long.parseLong(resultG[1]);
                 path.updateLinkG(movie.genres[j], existingAdress, newAdress);
