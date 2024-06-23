@@ -131,7 +131,6 @@ public class ArvoreB {
       } else {
         // Caso a chave não esteja presente no nó atual
         if (no.folha) {
-          System.out.println("Chave (" + chave1 + ", " + chave2 + ") não encontrada na árvore.");
           return;
         }
   
