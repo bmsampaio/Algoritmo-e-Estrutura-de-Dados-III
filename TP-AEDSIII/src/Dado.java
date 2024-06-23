@@ -14,8 +14,12 @@ public class Dado {
     protected long linkYear;
     protected long[] linkGenre;
     protected LocalDate release;
+    public CifraDeCesar cifraCesar;
+    public CifraDeSubstituicao cifraSubstituicao;
 
     public Dado(){
+        cifraCesar = new CifraDeCesar(); 
+        cifraSubstituicao = new CifraDeSubstituicao();
     }
 
     // creation of a data with information given by the user and the database
@@ -63,7 +67,7 @@ public class Dado {
         dos.writeUTF(this.title);
         dos.writeLong(this.release.toEpochDay());
         dos.writeLong(linkYear);
-        dos.writeUTF(this.overview);
+        dos.writeUTF(cifraSubstituicao.cifrar(cifraCesar.cifrar(this.overview)));
         dos.writeInt(this.popularity);
         dos.writeInt(this.quantityGenre);
         for (int i = 0; i < this.quantityGenre; i++) {
@@ -85,7 +89,7 @@ public class Dado {
         long epochDay = dis.readLong();
         this.release = LocalDate.ofEpochDay(epochDay);
         this.linkYear = dis.readLong();
-        this.overview = dis.readUTF();
+        this.overview = cifraCesar.decifrar(cifraSubstituicao.decifrar(dis.readUTF()));
         this.popularity = dis.readInt();
         this.quantityGenre = dis.readInt();
         this.genres = new String[this.quantityGenre];
